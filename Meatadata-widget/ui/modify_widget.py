@@ -56,6 +56,7 @@ class ModifyWidget(QWidget, Ui_ModifyWidget):
             'year': self.year_lineEdit.text(),
             'album': self.album_lineEdit.text(),
             'trackNumber': self.track_number_lineEdit.text(),
+            'picUrl': None
         }
         self.done_signal.emit(song_info, self.buffer)
         self.close()

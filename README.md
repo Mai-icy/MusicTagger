@@ -14,10 +14,19 @@ This is a graphical interface tool based on Python3 and Pyqt5, which uses data o
 - 使用了网易云歌曲数据api Netease cloud song data API was used
 - 可以手动编辑元数据，自定义上传专辑图片 You can manually edit metadata, custom upload album pictures
 - 可以补全mp3，flac文件 Can complete MP3, FLAC files
+- 可以下载歌词 You can download the lyrics
+- 可以自动补全元数据 Metadata can be automatically completed
 
 ### Version 1.0
 
 - 第一个较为稳定的版本 The first stable version
+
+### Version 1.2
+
+- 添加了酷狗api Added Kugou API
+- 添加了设置窗口 Added a Settings widget
+- 添加了歌词的下载 Added lyrics for download
+- 添加了自动补全元数据 Added the function of autocomplete metadata
 
 ## 运行环境与依赖 Running environment and requirements
 

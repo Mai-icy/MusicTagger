@@ -1,31 +1,49 @@
-# encoding: utf-8
+#!/usr/bin/python
+# -*- coding:utf-8 -*-
 import sys
 import os
 import io
+import threading
+import time
+
 import requests
 
 from PIL import Image
 
+from PyQt5.Qt import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
+from ui.metadata_setting import MetadataSetting
 from ui.ui_source.MetadataWidget import Ui_MetadataWidget
 from ui.modify_widget import ModifyWidget
 import song_metadata as sm
-from api.cloud_api import CloudMusicWebApi
+import api
+
+LRC_PATH = "download\\"
 
 
 class MetadataWidget(QWidget, Ui_MetadataWidget):
+    double_click_signal = pyqtSignal(str)
+
     def __init__(self, parent=None):
         super(MetadataWidget, self).__init__(parent)
         self.setupUi(self)
         self.modify_widget = ModifyWidget()
+        self.setting_widget = MetadataSetting()
         self._init_signal()
         self._init_table_widgets()
-        self.cloud_api = CloudMusicWebApi()
+        self._init_setting()
+        self.cloud_api = api.CloudMusicWebApi()
+        self.kugou_api = api.KugouApi()
 
         self.song_info = {}
+
+    def _init_setting(self):
+        self.api_mode = 'cloud'
+        self.is_replace_old_md5 = True
+        self.is_download_lrc = False
 
     def _init_signal(self):
         self.add_file_button.clicked.connect(self.add_file_event)
@@ -34,11 +52,14 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.search_button.clicked.connect(self.search_event)
         self.pass_button.clicked.connect(self.pass_event)
         self.modify_button.clicked.connect(self.modify_event)
+        self.setting_button.clicked.connect(self.setting_event)
 
         self.file_listWidget.itemClicked.connect(self.path_click_event)
         self.search_tableWidget.itemClicked.connect(self.result_click_event)
 
         self.modify_widget.done_signal.connect(self.modify_done_event)
+        self.setting_widget.done_signal.connect(self.__setting_done_event)
+        self.setting_widget.auto_signal.connect(self.auto_complete_event)
 
     def _init_table_widgets(self):
         self.search_tableWidget.horizontalHeader().setVisible(True)
@@ -121,13 +142,20 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         :param item: The clicked item
         :return: None
         """
-        song_id = int(self.search_tableWidget.item(item.row(), 3).text())
-        self.song_info = self.cloud_api.search_song_info(song_id)
-        pic_res = requests.get(self.song_info['picUrl'])
-        pix = Image.open(io.BytesIO(pic_res.content)).toqpixmap()
+        if self.api_mode == 'cloud':
+            song_id = self.search_tableWidget.item(item.row(), 3).text()
+            self.song_info = self.cloud_api.get_song_info(song_id)
+        elif self.api_mode == 'kugou':
+            md5 = self.search_tableWidget.item(item.row(), 3).text()
+            self.song_info = self.kugou_api.get_song_info(md5)
+        else:
+            raise ValueError("api_mode参数错误，未知的模式")
+        if self.song_info['picUrl']:
+            pic_res = requests.get(self.song_info['picUrl'])
+            pix = Image.open(io.BytesIO(pic_res.content)).toqpixmap()
+            self.result_pic_label.setPixmap(pix)
 
         self.result_pic_label.setScaledContents(True)
-        self.result_pic_label.setPixmap(pix)
         self.set_left_text(self.result_genre_label, 'N/A')
         self.set_left_text(self.result_year_label, self.song_info['year'])
         self.set_left_text(self.result_album_label, self.song_info['album'])
@@ -136,24 +164,23 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.set_left_text(self.result_song_name_label, self.song_info['songName'])
         self.set_left_text(self.result_track_number_label, self.song_info['trackNumber'])
 
-    def write_event(self, pic_buffer: io.BytesIO = None) -> None:
+    def write_event(self, *args, pic_buffer: io.BytesIO = None) -> None:
         """
         Be sure to write metadata and point to the next song path in the list.
         Item's background turns gray on success and red on failure.
 
-        :param args:
         :param pic_buffer: Custom image
         :return: None
         """
         if self.song_info:
             file_path = self.file_listWidget.currentItem().text()
             if os.path.splitext(file_path)[1] == '.mp3':
-                if pic_buffer.getvalue():
+                if pic_buffer and pic_buffer.getvalue():
                     is_success = sm.write_mp3_metadata(file_path, self.song_info, pic_buffer)
                 else:
                     is_success = sm.write_mp3_metadata(file_path, self.song_info)
             elif os.path.splitext(file_path)[1] == '.flac':
-                if pic_buffer.getvalue():
+                if pic_buffer and pic_buffer.getvalue():
                     is_success = sm.write_flac_metadata(file_path, self.song_info, pic_buffer)
                 else:
                     is_success = sm.write_flac_metadata(file_path, self.song_info)
@@ -164,6 +191,11 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
                 item.setBackground(QColor(Qt.lightGray))
             else:
                 item.setBackground(QColor(Qt.red))
+
+            if self.is_download_lrc:
+                time.sleep(0.1)
+                song_id_or_md5 = self.search_tableWidget.item(self.search_tableWidget.currentItem().row(), 3).text()
+                self.download_lrc(song_id_or_md5, ' - '.join([self.song_info["singer"], self.song_info["songName"]]))
 
             self.song_info.clear()
             self.file_listWidget.setCurrentRow(self.file_listWidget.currentRow() + 1)
@@ -178,7 +210,12 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         """
         keyword = self.search_lineEdit.text()
         if keyword:
-            search_res_data = self.cloud_api.search_data(keyword)
+            if self.api_mode == 'cloud':
+                search_res_data = self.cloud_api.search_data(keyword)
+            elif self.api_mode == 'kugou':
+                search_res_data = self.kugou_api.search_hash(keyword)
+            else:
+                raise ValueError("api_mode参数错误，未知的模式")
             self.__load_search_data(search_res_data)
 
     def pass_event(self) -> None:
@@ -211,6 +248,21 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.song_info = song_info
         self.write_event(pic_buffer=pic_buffer)
 
+    def setting_event(self) -> None:
+        self.setting_widget = MetadataSetting()
+        self.setting_widget.done_signal.connect(self.__setting_done_event)
+        self.setting_widget.auto_signal.connect(self.auto_complete_event)
+        if self.api_mode == "kugou":
+            self.setting_widget.api_comboBox.setCurrentIndex(1)
+        if self.is_download_lrc:
+            self.setting_widget.is_download_lrc_checkBox.setChecked(True)
+
+        self.setting_widget.show()
+
+    def __setting_done_event(self, setting_dict: dict) -> None:
+        self.api_mode = setting_dict["mode"]
+        self.is_download_lrc = setting_dict["is_lyric"]
+
     def __load_search_data(self, search_data: list) -> None:
         """
         load the search result to the table
@@ -234,12 +286,52 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             self.search_tableWidget.setItem(index, 2, item)
 
             item = QTableWidgetItem()
-            item.setText(str(data['songId']))
+            if self.api_mode == 'cloud':
+                item.setText(data['songId'])
+            if self.api_mode == 'kugou':
+                item.setText(data['md5'])
             self.search_tableWidget.setItem(index, 3, item)
 
         if search_data:  # 自动选中当前第一个
             self.search_tableWidget.selectRow(0)
-            self.result_click_event(self.search_tableWidget.selectedItems()[0])
+            self.result_click_event(self.search_tableWidget.item(0, 1))
+
+    def download_lrc(self, md5_or_id: str, save_name: str) -> None:
+        if self.api_mode == 'cloud':
+            lrc_file = self.cloud_api.get_lrc(md5_or_id)
+        elif self.api_mode == 'kugou':
+            lrc_info = self.kugou_api.get_lrc_info(md5_or_id)[0]
+            lrc_file = self.kugou_api.get_lrc(lrc_info)
+        else:
+            raise ValueError("api_mode参数错误，未知的模式")
+        lrc_file.save_to_mrc(LRC_PATH + save_name + '.mrc')
+
+    def auto_complete_event(self, setting_dict: dict) -> None:
+        self.__setting_done_event(setting_dict)
+        if not self.file_listWidget:
+            return
+        if not self.file_listWidget.selectedIndexes():
+            self.file_listWidget.setCurrentRow(0)
+        self.path_click_event(self.file_listWidget.currentItem())
+
+        t = threading.Thread(target=self.__thread_auto_complete)
+        t.start()
+
+    def __thread_auto_complete(self):
+        while True:
+            if self.file_listWidget.currentItem().background().color() == QColor(Qt.lightGray):
+                self.pass_event()
+            path = self.file_listWidget.currentItem().text()
+            now_info = sm.get_song_metadata(path)
+            score = sm.compare_song_info(now_info, self.song_info)
+            if score >= 80:
+                self.search_tableWidget.selectRow(0)
+                self.write_event()
+            else:
+                self.search_tableWidget.selectRow(0)
+                self.pass_event()
+            if not self.file_listWidget.selectedIndexes():
+                break
 
     @staticmethod
     def set_left_text(label: QLabel, text: str) -> None:
@@ -255,8 +347,6 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         metrics = QFontMetrics(label.font())
         new_text = metrics.elidedText(text, Qt.ElideRight, label.width())
         label.setText(new_text)
-
-
 
 
 if __name__ == "__main__":
