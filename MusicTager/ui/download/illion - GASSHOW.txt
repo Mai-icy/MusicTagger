@@ -1,0 +1,81 @@
+-*- type:non -*-
+[00:00:967]猛た波が喰らふは千の意思と万の生きし
+[00:07:652]御霊と一片の祈り八百万掬い给えと
+[00:14:271]その裂けた命乞ふ声さへも　海に响く鼓膜なく
+[00:21:188]今も何処かの海で　绝へず木霊し続けるのだろう
+[00:34:622]君の匂いは帰る场所
+[00:41:479]细い指先は向かう场所
+[00:48:245]万感の想いで积み上げた今日も
+[00:54:921]嘘になるなら　真実などもう頼らない
+[01:01:684]怒りもせず　涙も见せぬ
+[01:04:751]空と陆の狭间で生きるは
+[01:08:486]现を背に　痛みに狂う
+[01:11:506]我ら似て非なる群れた愚者
+[01:15:716]猛た波が喰らうは千の意思と万の生きし
+[01:21:809]御霊と一片の祈り　几年がまとめて刹那に
+[01:28:819]果てた陆に何を呗へば　再び光は芽吹く
+[01:35:442]今はこの调べを莳いて
+[01:38:677]彷徨う友が　帰る道しるべとして
+[01:45:265]出逢えたから　ここに在るこの
+[01:51:573]空っぽだから大事にするよ
+[01:58:237]运命か　采か　昨日と今日の
+[02:04:997]狭间に终えた　君の御霊と
+[02:15:336]引き换えに得た　この身のすべては
+[02:22:523]形见だから　守り通すよ
+[02:29:247]はじめてだよ　迹形も无い君に
+[02:36:002]声を振るわせ　届けと愿うのは
+
+-*- type:romaji -*-
+[00:00:967]taketta namigakurau wasennoishi toyorozunoikishi 
+[00:07:652]mitama toippen noinori yaoyorozu sukuitamae  to
+[00:14:271]sono saketa inochi kofukoe sae mouminihibiku komaku naku
+[00:21:188]imamoizudokoka noumidetaezu kodamashi tsuzukeru nodarou 
+[00:34:622]kiminonioi wakaeru basho
+[00:41:479]hosoi yubisaki wamukau basho
+[00:48:245]bankan noomoi detsumiageta  kyou mo
+[00:54:921]usoninaru nara hontou nado mou iranai
+[01:01:684]iari mosezu namidamo misenu
+[01:04:751]soratorikunohasama de ikiru ha
+[01:08:486]utsutsuwoseniitami nikuruu 
+[01:11:506]warera  nitehinaru  mureta gusha 
+[01:15:716]taketta namiga kurau wasennoishi toyorozuno ikishi 
+[01:21:809]mitama toippen noinori ikutoshi ga matomete setsuna ni
+[01:28:819] hateta rikuninaniwo utaeba futatabi hikariwa mebuku
+[01:35:442]imawakono shirabe wo maite
+[01:38:677]samayou tomagakaeru michishirube  toshite
+[01:45:265]deaeta  kara koko niaru kono
+[01:51:573]karappo  dakara daiji nisuru yo
+[01:58:237]sadame kasaikakinou tokyou no
+[02:04:997]hasama ni tsuieta kiminomitama to
+[02:15:336]hikikae  nieta kono mino subete wa
+[02:22:523]kadami dakara mamori toosu yo
+[02:29:247]hajimete  dayoatoka monai kimini
+[02:36:002]koewofuruwasetodoke tonegau nowa
+
+-*- type:chinese -*-
+[00:00:967]狂风巨浪吞噬千万含义 万千生灵
+[00:07:652]以及一丝祈许 那乞求悉数救赎的声音
+[00:14:271]早已声嘶力竭 响彻汪洋 纵无鼓膜
+[00:21:188]而今仍于某处海域 回响不绝乎
+[00:34:622]你的气息乃我归所
+[00:41:479]芊芊细指乃我所向之处
+[00:48:245]魂牵梦萦至今的思念
+[00:54:921]若只是谎言 这真实弃之也罢
+[01:01:684]不动怒 亦不以泪示人
+[01:04:751]于天与地的缝隙间苟活
+[01:08:486]背负现实 因痛楚而疯狂
+[01:11:506]似吾等 背道离经的愚众
+[01:15:716]狂风巨浪吞噬万千含义 万千生灵
+[01:21:809]以及一丝祈许 汇聚千年的瞬间
+[01:28:819]荒芜大陆 亦作何高歌 方能再度光彩焕发
+[01:35:442]而今播下这曲旋律
+[01:38:677]且做 彷徨友人归途的路标
+[01:45:265]自相遇之日起 便衍生出的这份
+[01:51:573]空洞 正因此才加倍珍惜
+[01:58:237]命中注定 亦或是成事在天 都于昨日与今朝的间隙
+[02:04:997]终焉 与你的灵魂
+[02:15:336]换而得之的 这一身皮囊
+[02:22:523]亦是遗物 正因此才拼死守护
+[02:29:247]此生从未如此 向着销声匿迹的你
+[02:36:002]嘶声力竭地祈许 祈许你能听见
+

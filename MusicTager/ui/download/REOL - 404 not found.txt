@@ -1,0 +1,198 @@
+-*- type:non -*-
+[00:00:000]REOL - 404 not found
+[00:00:570]词：Reol
+[00:01:150]曲：Reol
+[00:01:728]Fade away do over again
+[00:08:343]Fade away
+[00:13:822]歌い始めの一文字目
+[00:17:349]いつも迷ってる
+[00:19:187]どうせとりとめのないことだけど
+[00:23:346]伝わらなきゃもっと意味がない
+[00:27:687]どうしたってこんなに複雑なのに
+[00:31:266]噛み砕いてやらなきゃ伝わらない
+[00:34:617]ほら結局歌詞
+[00:36:319]なんかどうだっていい
+[00:37:909]僕の音楽なんか
+[00:39:127]この世になくたっていいんだよ
+[00:55:064]Everybody don't know why
+[00:58:618]Everybody don't know much
+[01:01:955]僕は気にしない
+[01:03:917]君は気付かない
+[01:05:555]何処にももういないいない
+[01:08:777]Everybody don't know why
+[01:12:237]Everybody don't know much
+[01:15:977]忘れていく忘れられていく
+[01:19:060]We don't know
+[01:19:756]We don't know
+[01:39:921]目の前
+[01:40:717]広がる現実世界がまた歪んだ
+[01:46:479]何度リセットしても
+[01:48:101]僕は僕以外の誰かには
+[01:50:593]生まれ変われない
+[01:52:073]「そんなの知ってるよ」
+[01:53:574]気になるあの子の噂話も
+[01:56:788]シニカル標的は次の速報
+[02:00:537]麻痺しちゃってる
+[02:02:212]こっからエスケープ
+[02:04:007]遠く遠くまで行けるよ
+[02:07:527]安定なんてない
+[02:10:830]不安定な世界
+[02:14:356]安定なんてない
+[02:17:782]きっと明日には忘れるよ
+[02:22:052]Fade away do over again
+[02:29:006]Fade away
+[02:34:524]そうだ世界は
+[02:35:815]どこかがいつも嘘くさい
+[02:37:956]綺麗事だけじゃ
+[02:39:002]大事な人たちすら守れない
+[02:41:356]くだらない
+[02:42:289]僕らみんなどこか狂ってるみたい
+[02:44:922]本当のことなんか
+[02:46:512]全部神様も知らない
+[02:48:740]神様も知らない
+[02:52:084]神様も知らない
+[02:55:467]神様も知らない
+[02:58:793]神様も知らない
+[03:03:505]Everybody don't know why
+[03:07:109]Everybody don't know much
+[03:10:626]僕は気にしない
+[03:12:398]君は気付かない
+[03:14:203]何処にももういないいない
+[03:17:310]Everybody don't know why
+[03:20:822]Everybody don't know much
+[03:24:488]忘れていく忘れられていく
+[03:27:572]We don't know
+[03:28:423]We don't know
+
+-*- type:romaji -*-
+[00:00:000]REOL - 404 not found
+[00:00:570]shi :Reol
+[00:01:150]kyo ku :Reol
+[00:01:728]Fade away do over again
+[00:08:343]Fade away
+[00:13:822]u ta i ha ji me no i chi mo ji me 
+[00:17:349]i tsu mo ma yo 't te ru 
+[00:19:187]do u se to ri to me no na i ko to da ke do 
+[00:23:346]tsu ta wa ra na kya mo tto i mi ga na i 
+[00:27:687]do u shi ta tte ko n na ni fu ku za tsu na no ni 
+[00:31:266]ka mi ku da i te ya ra na kya tsu ta wa ra na i 
+[00:34:617]ho ra ke kkyo ku ka shi 
+[00:36:319]na n ka do u da tte i i 
+[00:37:909]bo ku no o n ga ku na n ka 
+[00:39:127]ko no yo ni na ku ta tte i i n da yo 
+[00:55:064]Everybody don't know why
+[00:58:618]Everybody don't know much
+[01:01:955]bo ku wa ki ni shi na i 
+[01:03:917]ki mi wa ki du ka na i 
+[01:05:555]do ko ni mo mo u i na i i na i 
+[01:08:777]Everybody don't know why
+[01:12:237]Everybody don't know much
+[01:15:977]wa su re te i ku wa su re ra re te i ku 
+[01:19:060]We don't know
+[01:19:756]We don't know
+[01:39:921]me no ma e 
+[01:40:717]hi ro ga ru ge n ji tsu se ka i ga ma ta yu ga n da 
+[01:46:479]na n do ri se tto shi te mo 
+[01:48:101]bo ku wa bo ku i ga i no da re ka ni wa 
+[01:50:593]u ma re ka wa re na i 
+[01:52:073]「so n na no shi 't te ru yo 」
+[01:53:574]ki ni na ru a no ko no u wa sa ba na shi mo 
+[01:56:788]shi ni ka ru hyo u te ki wa tsu gi no so ku ho u 
+[02:00:537]ma hi shi cha 't te ru 
+[02:02:212]ko kka ra e su ke pu 
+[02:04:007]to o ku to o ku ma de i ke ru yo 
+[02:07:527]a n te i na n te na i 
+[02:10:830]fu a n te i na se ka i 
+[02:14:356]a n te i na n te na i 
+[02:17:782]ki tto a su ni wa wa su re ru yo 
+[02:22:052]Fade away do over again
+[02:29:006]Fade away
+[02:34:524]so u da se ka i wa 
+[02:35:815]do ko ka ga i tsu mo u so ku sa i 
+[02:37:956]ki re i go to da ke ja 
+[02:39:002]da i ji na hi to ta chi su ra ma mo re na i 
+[02:41:356]ku da ra na i 
+[02:42:289]bo ku ra mi n na do ko ka ku ru 't te ru mi ta i 
+[02:44:922]ho n to u no ko to na n ka 
+[02:46:512]ze n bu ka mi sa ma mo shi ra na i 
+[02:48:740]ka mi sa ma mo shi ra na i 
+[02:52:084]ka mi sa ma mo shi ra na i 
+[02:55:467]ka mi sa ma mo shi ra na i 
+[02:58:793]ka mi sa ma mo shi ra na i 
+[03:03:505]Everybody don't know why
+[03:07:109]Everybody don't know much
+[03:10:626]bo ku wa ki ni shi na i 
+[03:12:398]ki mi wa ki du ka na i 
+[03:14:203]do ko ni mo mo u i na i i na i 
+[03:17:310]Everybody don't know why
+[03:20:822]Everybody don't know much
+[03:24:488]wa su re te i ku wa su re ra re te i ku 
+[03:27:572]We don't know
+[03:28:423]We don't know
+
+-*- type:chinese -*-
+[00:00:000]  
+[00:00:570]  
+[00:01:150]  
+[00:01:728]  
+[00:08:343]  
+[00:13:822]歌曲开始第一个字时
+[00:17:349]总是犹豫
+[00:19:187]充其量是不熟稔的事
+[00:23:346]不过如果不表达的更好 没有意义
+[00:27:687]虽然无论怎样做都很麻烦
+[00:31:266]但是知道不糅合的话就无法传达
+[00:34:617]最后不管歌词
+[00:36:319]还是什么
+[00:37:909]我的音乐
+[00:39:127]就是这个世界上不存在也没关系吧
+[00:55:064] 
+[00:58:618]  
+[01:01:955]我没有在乎
+[01:03:917]你没有发觉
+[01:05:555]无论什么地方 已经都不见
+[01:08:777]  
+[01:12:237]  
+[01:15:977]逐渐忘却 逐渐被遗忘
+[01:19:060]  
+[01:19:756]  
+[01:39:921]眼前
+[01:40:717]伸展着的现实世界又扭曲了
+[01:46:479]无论复原多少次
+[01:48:101]我从来没有
+[01:50:593]为任何人诞生
+[01:52:073]那种事早明白了
+[01:53:574]脑中惦记着 那个孩子的谣言
+[01:56:788]讥讽的目标 是下一个新闻速报
+[02:00:537]从现在开始
+[02:02:212]已经麻木选择脱逃
+[02:04:007]可以逃到很远很远
+[02:07:527]这种不安定
+[02:10:830]动荡的世界
+[02:14:356]这种不安定
+[02:17:782]到明天一定会忘却吧
+[02:22:052]  
+[02:29:006]  
+[02:34:524]没错 世界上
+[02:35:815]充斥着谎言
+[02:37:956]只是花言巧语
+[02:39:002]重要的人也无法坚守
+[02:41:356]毫无意义
+[02:42:289]好像大家哪里不正常
+[02:44:922]即使是神明
+[02:46:512]也不了解全部的真相
+[02:48:740]神明也不了解
+[02:52:084]神明也不了解
+[02:55:467]神明也不了解
+[02:58:793]神明也不了解
+[03:03:505]  
+[03:07:109]  
+[03:10:626]我没有在乎
+[03:12:398]你没有发觉
+[03:14:203]无论什么地方 已经都不见
+[03:17:310]  
+[03:20:822]  
+[03:24:488]逐渐忘却 逐渐被遗忘
+[03:27:572]  
+[03:28:423]  
+

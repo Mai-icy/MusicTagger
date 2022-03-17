@@ -1,0 +1,126 @@
+-*- type:non -*-
+[00:01:191]父さん母さん 今までごめん
+[00:05:931]膝を震わせ 親指しゃぶる
+[00:10:321]兄さん姉さん それじゃあまたね
+[00:14:991]冴えない靴の 踵潰した
+[00:19:351]東京テディベア - オムニバス
+[00:22:831]作詞：Neru
+[00:24:051]作曲：Neru
+[00:29:327]見え張ったサイズで 型紙を取る
+[00:33:737]何だっていいのさ 代わりになれば
+[00:37:977]愛されたいと口を零した
+[00:42:387]もっと丈夫な ハサミで 顔を切り取るのさ
+[00:46:877]全智全能の 言葉を ほら聞かせてよ
+[00:51:387]脳みそ以外もう いらないと
+[00:54:277]Why not, I don't know
+[00:56:197]近未来創造 明日の傷創 ただ揺らしてよ
+[01:00:827]縫い目の隙間を埋めておくれ
+[01:16:549]皆さんさようなら 先生お元気で
+[01:20:549]高鳴った胸に 涎が垂れる
+[01:25:179]正直者は何を見る? 正直者は馬鹿を見る!
+[01:29:959]正直者は何を見る? 正直者は馬鹿を見る!
+[01:34:759]あー、これじゃまだ足りないよ
+[01:38:719]もっと大きな ミシンで 心貫くのさ
+[01:43:389]全智全能の 言葉を ほら聞かせてよ
+[01:47:819]脳みそ以外もう いらないと
+[01:50:429]Why not, I don't know
+[01:52:639]近未来創造 明日の傷創 ただ揺らしてよ
+[01:57:189]縫い目の隙間を埋めておくれ
+[02:11:613]もう何も無いよ 何も無いよ 引き剥がされて
+[02:15:983]糸屑の 海へと この細胞も
+[02:20:783]そうボクいないよ ボクいないよ
+[02:23:193]投げ捨てられて
+[02:25:683]帰る場所すら何処にも無いんだよ
+[02:30:253]存在証明。
+[02:31:383]あー、shut up ウソだらけの体
+[02:34:923]完成したいよ ズルしたいよ 今、解答を
+[02:39:643]変われないの? 飼われたいの?
+[02:42:153]何も無い? こんなのボクじゃない!
+[02:44:753]縫い目は解けて引き千切れた
+[03:00:165]煮え立ったデイズで 命火を裁つ
+[03:04:535]誰だっていいのさ 代わりになれば
+
+-*- type:romaji -*-
+[00:01:191]tousankaasan yimamadegomen
+[00:05:931]hizaofuluwase oyayubixiyabulu
+[00:10:321]nisannesan solejiyaamatane
+[00:14:991]saenayikucuno kakatocubuxita
+[00:19:351]toukiyoutedeyibea -omunibasu
+[00:22:831]sakuxi Neru
+[00:24:051]sakiyoku Neru
+[00:29:327]miehatasayizude katagamiotolu
+[00:33:737]nandateyiyinosa kawalininaleba
+[00:37:977]aisaletayitokuqiokoboxita
+[00:42:387]motojiyoubuna hasamide kaookilitolunosa
+[00:46:877]zenxinzennouno kotobao holakikaseteyo
+[00:51:387]noumisoyigaimowu yilanayito
+[00:54:277]
+[00:56:197]kinmilaisouzou asunoxiyousou tadayulaxiteyo
+[01:00:827]nuyimenosukimaowumeteokule
+[01:16:549]minasansayowunala senseiogenkide
+[01:20:549]takanatamuneni yodalegatalelu
+[01:25:179]xiyoujikimonowananiomilu? xiyoujikimonowabakaomilu!
+[01:29:959]xiyoujikimonowananiomilu? xiyoujikimonowabakaomilu!
+[01:34:759]aa kolejiyamadatalinayiyo
+[01:38:719]motoookina mixinde kokoloculanukunosa
+[01:43:389]zenqizennouno kotobao holakikaseteyo
+[01:47:819]noumisoyigaimowu yilanayito
+[01:50:429]
+[01:52:639]kinmilaisouzou asunoxiyousou tadayulaxiteyo
+[01:57:189]nuyimenosukimaowumeteokule
+[02:11:613]mowunanimonayiyo nanimonayiyo hikihagasalete
+[02:15:983]yitokuzuno wumiheto konosaiboumo
+[02:20:783]sowubokuyinayiyo bokuyinayiyo
+[02:23:193]nagesutelalete
+[02:25:683]kaelubaxiyosuladokonimonayindayo
+[02:30:253]sonzaixiyoumei 
+[02:31:383]aa shutup wusodalakenokalada
+[02:34:923]kanseixitayiyo zuluxitayiyo yima kaitouo
+[02:39:643]kawalenayino? kawaletayino?
+[02:42:153]nanimonayi? konnanobokujiyanayi!
+[02:44:753]nuyimewatoketehikiqigileta
+[03:00:165]nietatadeyizude yinoqibiotatucu
+[03:04:535]daledateyiyinosa kawalininaleba
+
+-*- type:chinese -*-
+[00:01:191]爸爸妈妈，至今为止麻烦了
+[00:05:931]哆嗦着膝盖，咬着大拇指
+[00:10:321]哥哥姐姐，那么再见吧
+[00:14:991]磨损的鞋子，擦破脚后跟
+[00:19:351]  
+[00:22:831]  
+[00:24:051]  
+[00:29:327]用夸张显眼的尺寸,剪着纸
+[00:33:737]那么要做成怎样才好呢
+[00:37:977]念着好想被爱
+[00:42:387]用更结实的剪刀,剪下这张脸
+[00:46:877]来让我理解一切智慧与能力并存话语吧
+[00:51:387]脑子以外的,不再需要了
+[00:54:277]为什么不要,我不知道
+[00:56:197]未来的创造,明天的创伤,就这样动摇了吧
+[01:00:827]去埋入缝隙中
+[01:16:549]大家再见了,老师保重啊			
+[01:20:549]怀着激动的心情,流着口水
+[01:25:179]老实人看着什么?老实人看着笨蛋呢!
+[01:29:959]老实人看着什么?老实人看着笨蛋呢!
+[01:34:759]啊,这样还不够哦
+[01:38:719]用再大一点的缝纫机,贯穿心脏吧
+[01:43:389]来让我理解一切智慧与能力并存话语吧
+[01:47:819]脑子以外的,不再需要了
+[01:50:429]为什么不要,我不知道
+[01:52:639]未来的创造,明天的创伤 就这样动摇了吧
+[01:57:189]去埋入缝隙中
+[02:11:613]已经一无所有了,一无所有了,被扯下来了
+[02:15:983]这些细胞也朝着废线的海洋中被丢弃了
+[02:20:783]那样的我不在了,我不在了,被丢弃了
+[02:23:193]被丢弃了
+[02:25:683]就连回去的地方也没有了
+[02:30:253]存在证明
+[02:31:383]啊,闭嘴,充满谎言的身体
+[02:34:923]好想完成,好想瞒骗啊,现在要将此解答
+[02:39:643]无法改变吗?想被照料吗?
+[02:42:153]一无所有?这不是我!
+[02:44:753]松开线头扯成粉碎
+[03:00:165]用沸腾的日子来裁剪生命
+[03:04:535]要谁来代替呢
+

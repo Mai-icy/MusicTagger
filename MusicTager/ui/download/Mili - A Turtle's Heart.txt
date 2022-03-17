@@ -1,0 +1,88 @@
+-*- type:non -*-
+[00:00:270]A Turtle's Heart - Mili
+[00:14:311]Monday is a rainy day
+[00:16:851]And I stay inside
+[00:18:021]Letting time pass away
+[00:20:910]Tuesday it is quite the same
+[00:23:090]So I daydream
+[00:24:470]About moments of shame
+[00:26:990]Life goes around and round
+[00:30:159]I've stumbled
+[00:31:739]And stopped moving on
+[00:34:729]Turn around and I realized
+[00:38:199]That I have been left behind
+[00:46:119]In a tiny tiny tiny tiny cubicle
+[00:49:169]There lives a whiny whiny
+[00:50:399]Whiny cowardly turtle
+[00:52:978]In twenty thirty
+[00:53:718]Forty fifty sixty years
+[00:55:428]My heart won't die
+[00:57:608]No matter how hard I try
+[01:19:428]Today is a lonely day
+[01:21:698]I pretend
+[01:22:328]That I really liked it this way
+[01:25:618]Tomorrow will stay the same
+[01:28:038]I can't even remember your name
+[01:32:017]You're around no more
+[01:36:367]No more
+[01:38:447]Though this love of mine
+[01:42:837]It just won't stop
+[02:00:867]No body body body body to support
+[02:03:747]My heavy heavy heavy but empty shell
+[02:06:987]But I'm not lazy lazy lazy lazy anymore
+[02:10:237]Oh darling can't you see
+[02:12:147]I've grown so much more
+[02:14:017]Maybe maybe maybe
+[02:15:057]You've forgiven me
+[02:16:527]Oh but darling darling darling
+[02:18:277]You have to make sure
+[02:20:157]To stab me pierce me hurt me
+[02:21:647]Kill me thoroughly
+[02:23:047]You see
+[02:23:477]My heart won't die
+[02:25:187]But I really tried
+
+-*- type:chinese -*-
+[00:00:270]  
+[00:14:311]星期一阴雨绵绵
+[00:16:851]我待在家里
+[00:18:021]让时间流去
+[00:20:910]星期二也并无区别
+[00:23:090]所以我做了个白日梦
+[00:24:470]记录下这虚度的光阴
+[00:26:990]生活总是转啊转
+[00:30:159]我步履蹒跚
+[00:31:739]停下了脚步
+[00:34:729]转个身我才明白
+[00:38:199]我已被远远抛弃
+[00:46:119]在那狭小窄小微小极小的隔间
+[00:49:169]住着一只不停抱怨
+[00:50:399]埋怨哀怨的怯懦乌龟
+[00:52:978]即使过了二十三十
+[00:53:718]四十五十六十年
+[00:55:428]无论我如何费心竭虑
+[00:57:608]我的心就是不愿死去
+[01:19:428]今天依然孤零零
+[01:21:698]我假装
+[01:22:328]我很喜欢这样
+[01:25:618]明天也会是一成不变
+[01:28:038]我甚至记不起你姓名
+[01:32:017]你已不在我的身边
+[01:36:367]早已不在
+[01:38:447]不过我的这份爱意
+[01:42:837]就是无法止息
+[02:00:867]没有身体肉体形体去支撑
+[02:03:747]我那沉重笨重深重却空虚的壳
+[02:06:987]不过我已不再懒惰怠惰懈惰
+[02:10:237]亲爱的 难道你看不到吗
+[02:12:147]我已成长了许多
+[02:14:017]也许
+[02:15:057]你已经原谅了我
+[02:16:527]但是 亲爱的
+[02:18:277]你一定要确确实实
+[02:20:157]捅穿我 刺透我 伤害我
+[02:21:647]彻彻底底地杀死我
+[02:23:047]你知道的
+[02:23:477]我的心就是无法死去
+[02:25:187]但我真的已尝尽所有
+

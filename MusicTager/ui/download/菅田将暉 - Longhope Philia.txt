@@ -1,0 +1,118 @@
+-*- type:non -*-
+[00:00:852]菅田将暉 - ロングホープ・フィリア
+[00:10:436]作詞：秋田ひろむ
+[00:13:135]作曲：秋田ひろむ
+[00:24:800]歩くほどに靴底が
+[00:29:025]汚れてくそんな風に
+[00:33:309]僕らの魂も
+[00:37:388]磨り減れば影ってしまうよ
+[00:41:612]そんな時に思い出して
+[00:46:090]君が諦められない理由を
+[00:50:410]救ったはずが救われたっけ
+[00:54:737]握ったつもりが握られた手
+[00:58:907]遍く旅路に光あれ
+[01:02:672]強さや弱さでは語れないぜ
+[01:07:562]立ち向かうその一歩ずつが
+[01:11:836]君の勇敢さの勝利だった
+[01:16:157]叫ぶ為に息を吸うように
+[01:20:435]高く飛ぶ為に助走があって
+[01:24:864]笑う為に僕らは泣いた
+[01:28:989]それを敗北とは言わない
+[01:33:010]ロングホープ・フィリア
+[01:50:532]時を経ては変わってく
+[01:54:710]街並みも友達も
+[01:59:090]大抵は離れて分かる
+[02:03:314]寄る辺なさは瞭然たる感傷
+[02:07:540]ましてや自分僕は僕を
+[02:11:706]離れられぬやましさを背負って
+[02:16:133]だから友よ見届けてくれ
+[02:20:403]変わったのじゃなく変えたのだ
+[02:24:723]遍く挫折に光あれ
+[02:28:999]成功、失敗に意味はないぜ
+[02:33:228]最終話で笑った奴へ
+[02:37:458]トロフィーとしてのハッピーエンド
+[02:41:885]願わなきゃ傷つかなかった
+[02:45:241]望まなきゃ失望もしなかった
+[02:50:432]それでも手を伸ばすからこその
+[02:54:715]その傷跡を称え給え
+[02:58:583]ロングホープ・フィリア
+[03:18:395]諦めて疑って塞いで
+[03:21:702]期待外れって言われたっけ
+[03:26:642]でも失くしたことが武器になった
+[03:31:123]それがどん底に咲いた花
+[03:35:246]遠き友よ
+[03:38:352]今ではもう蒼い星座
+[03:42:577]少なからず僕ら生きてる
+[03:47:310]荷物ならばそれで充分だ
+[03:53:619]遍く命に光あれ
+[03:57:994]生きる為に理由はいらないぜ
+[04:02:271]うなだれても踏み留まった
+[04:06:401]そこをスタートラインと呼ぶんだ
+[04:10:733]今日の君が笑ったことで
+[04:15:017]敗北も無駄にはならなかった
+[04:19:288]故に咲くどん底の花
+[04:23:666]友よ 末永い希望を
+[04:27:538]ロングホープ・フィリア
+[04:32:678]ロングホープ・フィリア
+[04:37:005]ロングホープ・フィリア
+[04:41:529]ロングホープ・フィリア
+
+-*- type:romaji -*-
+[00:00:852]su ga ta ma sa te ru  - ro n gu ho pu ・fi ri a 
+[00:10:436]sa ku shi :a ki ta hi ro mu 
+[00:13:135]sa kkyo ku :a ki ta hi ro mu 
+[00:24:800]a ru ku ho do ni ku tsu zo ko ga 
+[00:29:025]yo go re te ku so n na fu u ni 
+[00:33:309]bo ku ra no ta ma shi i mo 
+[00:37:388]su ri he re ba ka ge 't te shi ma u yo 
+[00:41:612]so n na to ki ni o mo i da shi te 
+[00:46:090]ki mi ga a ki ra me ra re na i ri yu u wo 
+[00:50:410]su ku 't ta ha zu ga su ku wa re ta kke 
+[00:54:737]ni gi 't ta tsu mo ri ga ni gi ra re ta te 
+[00:58:907]pe n ku ta bi ji ni hi ka ri a re 
+[01:02:672]tsu yo sa ya yo wa sa de wa ka ta re na i ze 
+[01:07:562]ta chi mu ka u so no i tsu po zu tsu ga 
+[01:11:836]ki mi no yu u ka n sa no sho u ri da tsu ta 
+[01:16:157]sa ke bu ta me ni i ki wo su u yo u ni 
+[01:20:435]ta ka ku to bu ta me ni jo so u ga a 't te 
+[01:24:864]wa ra u ta me ni bo ku ra wa na i ta 
+[01:28:989]so re wo ha i bo ku to wa i wa na i 
+[01:33:010]ro n gu ho pu ・fi ri a 
+[01:50:532]to ki wo he te wa ka wa 't te ku 
+[01:54:710]ma chi na mi mo to mo da chi mo 
+[01:59:090]ta i te i wa ha na re te wa ka ru 
+[02:03:314]yo ru he n na sa wa ryo u ze n ta ru ka n sho u 
+[02:07:540]ma shi te ya ji bu n bo ku wa bo ku wo 
+[02:11:706]ha na re ra re nu ya ma shi sa wo se o 't te 
+[02:16:133]da ka ra to mo yo mi to do ke te ku re 
+[02:20:403]ka wa 't ta no ja na ku ka e ta no da 
+[02:24:723]pe n ku za se tsu ni hi ka ri a re 
+[02:28:999]se i ko u 、shi ppa i ni i mi wa na i ze 
+[02:33:228]sa i shu u ba na shi de wa ra 't ta ya tsu he 
+[02:37:458]to ro fi to shi te no ha ppi e n do 
+[02:41:885]ne ga wa na kya ki zu tsu ka na ka tsu ta 
+[02:45:241]no zo ma na kya shi tsu bo u mo shi na ka tsu ta 
+[02:50:432]so re de mo te wo no ba su ka ra ko so no 
+[02:54:715]so no ki zu a to wo ta ta e ta ma e 
+[02:58:583]ro n gu ho pu ・fi ri a 
+[03:18:395]a ki ra me te u ta ga 't te fu sa i de 
+[03:21:702]ki ta i ha zu re tte i wa re ta kke 
+[03:26:642]de mo u shi na ku shi ta ko to ga bu ki ni na 't ta 
+[03:31:123]so re ga do n zo ko ni sa i ta ha na 
+[03:35:246]to o ki to mo yo 
+[03:38:352]i ma de wa mo u a o i se i za 
+[03:42:577]su ku na ka ra zu bo ku ra i ki te ru 
+[03:47:310]ni mo tsu na ra ba so re de ju u bu n da 
+[03:53:619]pe n ku i no chi ni hi ka a re 
+[03:57:994]i ki ru ta me ni ri yu u wa i ra na i ze 
+[04:02:271]u na da re te mo fu mi to do ma 't ta 
+[04:06:401]so ko wo su ta to ra i n to yo bu n da 
+[04:10:733]kyo u no ki mi ga wa ra 't ta ko to de 
+[04:15:017]ha i bo ku mo mu da ni wa na ra na ka tsu ta 
+[04:19:288]yu e ni sa ku do n zo ko no ha na 
+[04:23:666]to mo yo  su e na ga i ki bo u wo 
+[04:27:538]ro n gu ho pu ・fi ri a 
+[04:32:678]ro n gu ho pu ・fi ri a 
+[04:37:005]ro n gu ho pu ・fi ri a 
+[04:41:529]ro n gu ho pu ・fi ri a 
+

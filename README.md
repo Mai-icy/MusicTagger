@@ -1,4 +1,4 @@
-# Meatadata-widget
+# MusicTager
 
 一个带有图形界面的mp3 flac元数据补全工具
 
@@ -6,27 +6,14 @@
 
 这是基于Python3以及Pyqt5的图形界面工具，利用网易云api的数据，补全歌曲元数据的工具。
 
-This is a graphical interface tool based on Python3 and Pyqt5, which uses data of netease cloud API to complete song metadata.
-
 ## 特性 Features
 
-- 拥有方便操作的用户图形界面 With an easly-operated GUI
-- 使用了网易云歌曲数据api Netease cloud song data API was used
-- 可以手动编辑元数据，自定义上传专辑图片 You can manually edit metadata, custom upload album pictures
-- 可以补全mp3，flac文件 Can complete MP3, FLAC files
-- 可以下载歌词 You can download the lyrics
-- 可以自动补全元数据 Metadata can be automatically completed
-
-### Version 1.0
-
-- 第一个较为稳定的版本 The first stable version
-
-### Version 1.2
-
-- 添加了酷狗api Added Kugou API
-- 添加了设置窗口 Added a Settings widget
-- 添加了歌词的下载 Added lyrics for download
-- 添加了自动补全元数据 Added the function of autocomplete metadata
+- 拥有方便操作的用户图形界面
+- 使用了网易云，酷狗歌曲数据
+- 可以手动编辑元数据，自定义上传专辑图片
+- 可以补全mp3，flac, m4a文件
+- 可以下载歌词
+- 可以自动补全元数据
 
 ## 运行环境与依赖 Running environment and requirements
 

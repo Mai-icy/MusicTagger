@@ -1,0 +1,162 @@
+-*- type:non -*-
+[00:00:200]词：Reol
+[00:00:300]曲：Reol
+[00:32:649]大人になれば
+[00:34:522]わかるようになること
+[00:36:826]未だわからななななない
+[00:40:124]こんなに
+[00:40:758]余計なことを気にしている
+[00:43:955]狂ってしまいそうだなななな
+[00:46:938]中から溢れた妬みで殴った
+[00:50:784]そうしたら自分が
+[00:52:506]救われる気がしてた
+[00:54:666]抜け出せないまま
+[00:56:419]どうしようもないまま
+[00:58:497]今日が笑う僕をまた
+[01:00:329]ほら塗り重ねた
+[01:02:959]I'm lonelyどんなに傷つけあって
+[01:10:449]I'm lonelyこの憂いは僕だけじゃ
+[01:15:326]埋めることができない
+[01:17:813]ただ誰か今抱きしめて
+[01:25:462]心の奥を見抜いてよ
+[01:31:774]ああこんなはずじゃなかったって
+[01:33:660]心でずっと唱えて
+[01:35:897]いつの間にか
+[01:36:865]そんな自分のこと
+[01:38:001]嫌いになってるから
+[01:39:787]愛せるはずがないでしょう
+[01:42:028]馬鹿にする的探して安堵
+[01:45:288]何度目の正直者
+[01:47:185]そうやって繰り返して
+[01:49:310]そうやって巻き戻して
+[01:51:066]そうやって擦り切れてく
+[01:52:911]寂しさにかまけて
+[01:54:824]All right気付いてるよ
+[01:56:767]All rightわかってるよ
+[01:58:565]All right煩いなもうどうしてなの
+[02:02:892]I'm lonelyこんなに傷付けて
+[02:10:279]I'm lonelyもう既に僕だけじゃ
+[02:15:303]埋めることができない
+[02:17:860]人混みの中紛れている
+[02:25:508]誰か僕のこと見つけてよ
+[02:47:094]大都会の喧騒に
+[02:49:486]汚染された僕らの脳
+[02:52:378]寂しがりやまた一人助けにきて
+[02:57:978]こんな僕でも愛してよねぇ
+[03:02:798]I'm lonelyそうじゃない
+[03:05:547]ただ愛されたくて
+[03:10:456]I'm lonelyそうじゃない
+[03:14:057]満たされたいそれだけで
+[03:16:290]仕方がない
+[03:17:848]いつの日も
+[03:19:590]僕ら間違って失って嘆く
+[03:28:999]振り出しへと戻る
+
+-*- type:romaji -*-
+[00:00:200]shi :Reol
+[00:00:300]kyo ku :Reol
+[00:32:649]o to na ni na re ba 
+[00:34:522]wa ka ru yo u ni na ru ko to 
+[00:36:826]i ma da wa ka ra na na na na na i 
+[00:40:124]ko n na ni 
+[00:40:758]yo ke i na ko to wo ki ni shi te i ru 
+[00:43:955]ku ru 't te shi ma i so u da na na na na 
+[00:46:938]na ka ka ra a fu re ta ne ta mi de na gu 't ta 
+[00:50:784]so u shi ta ra ji bu n ga 
+[00:52:506]su ku wa re ru ki ga shi te ta 
+[00:54:666]nu ke da se na i ma ma 
+[00:56:419]do u shi yo u mo na i ma ma 
+[00:58:497]kyo u ga wa ra u bo ku wo ma ta 
+[01:00:329]ho ra nu ri ka sa ne ta 
+[01:02:959]I'm lonelydo n na ni ki zu tsu ke a 't te 
+[01:10:449]I'm lonelyko no u re i wa bo ku da ke ja 
+[01:15:326]u me ru ko to ga de ki na i 
+[01:17:813]ta da da re ka i ma da ki shi me te 
+[01:25:462]ko ko ro no o ku wo mi nu i te yo 
+[01:31:774]a a ko n na ha zu ja na ka tsu ta tte 
+[01:33:660]ko ko ro de zu tto to na e te 
+[01:35:897]i tsu no ma ni ka 
+[01:36:865]so n na ji bu n no ko to 
+[01:38:001]ki ra i ni na 't te ru ka ra 
+[01:39:787]a i se ru ha zu ga na i de sho u 
+[01:42:028]ba ka ni su ru te ki sa ga shi te a n do 
+[01:45:288]na n do me no sho u ji ki sha 
+[01:47:185]so u ya 't te ku ri ka e shi te 
+[01:49:310]so u ya 't te ma ki mo do shi te 
+[01:51:066]so u ya 't te su ri ki re te ku 
+[01:52:911]sa bi shi sa ni ka ma ke te 
+[01:54:824]All rightki du i te ru yo 
+[01:56:767]All rightwa ka 't te ru yo 
+[01:58:565]All rightwa zu ra i na mo u do u shi te na no 
+[02:02:892]I'm lonelyko n na ni ki zu tsu ke te 
+[02:10:279]I'm lonelymo u su de ni bo ku da ke ja 
+[02:15:303]u me ru ko to ga de ki na i 
+[02:17:860]hi to go mi no na ka ma gi re te i ru 
+[02:25:508]da re ka bo ku no ko to mi tsu ke te yo 
+[02:47:094]da i to ka i no ke n so u ni 
+[02:49:486]o se n sa re ta bo ku ra no no u 
+[02:52:378]sa bi shi ga ri ya ma ta i chi ji n ta su ke ni ki te 
+[02:57:978]ko n na bo ku de mo a i shi te yo ne e 
+[03:02:798]I'm lonelyso u ja na i 
+[03:05:547]ta da a i sa re ta ku te 
+[03:10:456]I'm lonelyso u ja na i 
+[03:14:057]mi ta sa re ta i so re da ke de 
+[03:16:290]shi ka ta ga na i 
+[03:17:848]i tsu no hi mo 
+[03:19:590]bo ku ra ma chi ga 't te u shi na 't te na ge ku 
+[03:28:999]fu ri da shi he to mo do ru 
+
+-*- type:chinese -*-
+[00:00:200] 
+[00:00:300] 
+[00:32:649]等长大了就懂了
+[00:34:522] 这样的事 
+[00:36:826]依然没有懂
+[00:40:124]如果要去计较
+[00:40:758]太多无用的事物
+[00:43:955]可能会发疯吧
+[00:46:938]被嫉妒击中后 从中溢出
+[00:50:784]说不定感觉自己
+[00:52:506]会获得救赎
+[00:54:666]一直不能摆脱的话
+[00:56:419]就无可奈何
+[00:58:497]看 今天的我依然
+[01:00:329]装点上微笑
+[01:02:959]I'm lonely 无论受到 再多伤害
+[01:10:449]I'm lonely 这伤口 仅靠我 
+[01:15:326]无法愈合
+[01:17:813]只希望 能有人拥抱 
+[01:25:462]看穿我的 内心深处啊
+[01:31:774]啊啊 本该不是这样
+[01:33:660]心里想着
+[01:35:897]不知不觉
+[01:36:865]开始讨厌
+[01:38:001]那样的自己
+[01:39:787]无法摆脱
+[01:42:028]总是拿老实的笨蛋
+[01:45:288]寻找心情安定
+[01:47:185]就这样 重复 
+[01:49:310]就这样 倒回
+[01:51:066]就这样 磨损 
+[01:52:911]被寂寞占领
+[01:54:824]All right 注意到了呀
+[01:56:767]All right 我明白了呀
+[01:58:565]All right 为什么 这么烦人啊
+[02:02:892]I'm lonely 如此受到 再多伤害
+[02:10:279]I'm lonely 仅靠自己 
+[02:15:303]已经是无法填补了
+[02:17:860]混杂在人群中 
+[02:25:508]谁能找得到我
+[02:47:094]我们的脑袋
+[02:49:486]被大城市的喧嚣污染
+[02:52:378]又是一个寂寞的人 想要帮助
+[02:57:978]尽管这样 也请来爱我 可以吗
+[03:02:798]I'm lonely 不知道呢 
+[03:05:547]想被爱而已
+[03:10:456]I'm lonely 不知道呢 
+[03:14:057]只想获得满足
+[03:16:290]毫无办法
+[03:17:848]总有一天
+[03:19:590]我们犯下错误 因失去悲叹
+[03:28:999]回到最初
+
