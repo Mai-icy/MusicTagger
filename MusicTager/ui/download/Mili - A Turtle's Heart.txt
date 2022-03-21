@@ -1,88 +1,81 @@
 -*- type:non -*-
-[00:00:270]A Turtle's Heart - Mili
-[00:14:311]Monday is a rainy day
-[00:16:851]And I stay inside
-[00:18:021]Letting time pass away
-[00:20:910]Tuesday it is quite the same
-[00:23:090]So I daydream
-[00:24:470]About moments of shame
-[00:26:990]Life goes around and round
-[00:30:159]I've stumbled
-[00:31:739]And stopped moving on
-[00:34:729]Turn around and I realized
-[00:38:199]That I have been left behind
-[00:46:119]In a tiny tiny tiny tiny cubicle
-[00:49:169]There lives a whiny whiny
-[00:50:399]Whiny cowardly turtle
-[00:52:978]In twenty thirty
-[00:53:718]Forty fifty sixty years
-[00:55:428]My heart won't die
-[00:57:608]No matter how hard I try
-[01:19:428]Today is a lonely day
-[01:21:698]I pretend
-[01:22:328]That I really liked it this way
-[01:25:618]Tomorrow will stay the same
-[01:28:038]I can't even remember your name
-[01:32:017]You're around no more
-[01:36:367]No more
-[01:38:447]Though this love of mine
-[01:42:837]It just won't stop
-[02:00:867]No body body body body to support
-[02:03:747]My heavy heavy heavy but empty shell
-[02:06:987]But I'm not lazy lazy lazy lazy anymore
-[02:10:237]Oh darling can't you see
-[02:12:147]I've grown so much more
-[02:14:017]Maybe maybe maybe
-[02:15:057]You've forgiven me
-[02:16:527]Oh but darling darling darling
-[02:18:277]You have to make sure
-[02:20:157]To stab me pierce me hurt me
-[02:21:647]Kill me thoroughly
-[02:23:047]You see
-[02:23:477]My heart won't die
-[02:25:187]But I really tried
+[00:00:000] 作词 : Mili
+[00:01:000] 作曲 : Mili
+[00:14:260]Monday is a rainy day
+[00:16:690]And I stay inside letting time pass away
+[00:20:740]Tuesday it is quite the same
+[00:23:170]So I daydream about moments of shame
+[00:26:950]Life goes around and round
+[00:30:040]I’ve stumbled and stopped moving on
+[00:34:510]Turn around and I realized
+[00:38:250]That I have been left behind
+[00:45:870]In a tiny tiny tiny tiny cubicle
+[00:49:150]There lives a whiny whiny whiny cowardly turtle
+[00:52:750]In twenty thirty forty fifty sixty years
+[00:55:590]My heart won’t die no matter how hard I try
+[01:19:120]Today is a lonely day
+[01:21:540]I pretend that I really liked it this way
+[01:25:550]Tomorrow will stay the same
+[01:28:030]And I can’t even remember your name
+[01:31:740]You’re around no more
+[01:36:520]No more
+[01:39:640]Though this love of mine
+[01:42:630]It just won’t stop
+[02:00:830]No body body body body to support my
+[02:03:700]Heavy heavy heavy but empty shell
+[02:07:330]But I’m not lazy lazy lazy lazy anymore
+[02:10:140]Oh darling can’t you see  I've grown so much more?
+[02:13:820]Maybe maybe maybe you’ve forgiven me
+[02:16:580]Oh but darling darling darling you have to make sure
+[02:20:210]To stab me pierce me hurt me kill me thoroughly
+[02:22:960]You see
+[02:23:490]My heart won’t die though I really tried
+[02:33:230]Oh
 
 -*- type:chinese -*-
-[00:00:270]  
-[00:14:311]星期一阴雨绵绵
-[00:16:851]我待在家里
-[00:18:021]让时间流去
-[00:20:910]星期二也并无区别
-[00:23:090]所以我做了个白日梦
-[00:24:470]记录下这虚度的光阴
-[00:26:990]生活总是转啊转
-[00:30:159]我步履蹒跚
-[00:31:739]停下了脚步
-[00:34:729]转个身我才明白
-[00:38:199]我已被远远抛弃
-[00:46:119]在那狭小窄小微小极小的隔间
-[00:49:169]住着一只不停抱怨
-[00:50:399]埋怨哀怨的怯懦乌龟
-[00:52:978]即使过了二十三十
-[00:53:718]四十五十六十年
-[00:55:428]无论我如何费心竭虑
-[00:57:608]我的心就是不愿死去
-[01:19:428]今天依然孤零零
-[01:21:698]我假装
-[01:22:328]我很喜欢这样
-[01:25:618]明天也会是一成不变
-[01:28:038]我甚至记不起你姓名
-[01:32:017]你已不在我的身边
-[01:36:367]早已不在
-[01:38:447]不过我的这份爱意
-[01:42:837]就是无法止息
-[02:00:867]没有身体肉体形体去支撑
-[02:03:747]我那沉重笨重深重却空虚的壳
-[02:06:987]不过我已不再懒惰怠惰懈惰
-[02:10:237]亲爱的 难道你看不到吗
-[02:12:147]我已成长了许多
-[02:14:017]也许
-[02:15:057]你已经原谅了我
-[02:16:527]但是 亲爱的
-[02:18:277]你一定要确确实实
-[02:20:157]捅穿我 刺透我 伤害我
-[02:21:647]彻彻底底地杀死我
-[02:23:047]你知道的
-[02:23:477]我的心就是无法死去
-[02:25:187]但我真的已尝尽所有
+[00:00:000]
+[00:01:000]
+[00:14:260]周一的雨连绵不断
+[00:16:690]我呆在巢穴中虚度光阴
+[00:20:740]周二也这样浑浑噩噩
+[00:23:170]我只能幻想重拾错过的时光
+[00:26:950]生命的年轮转了一圈又一圈
+[00:30:040]我却依然蹒跚徘徊，停滞不前
+[00:34:510]回首往事，我才醒悟
+[00:38:250]我已被时间所抛弃
+[00:45:870]在这小小的斗室中
+[00:49:150]禁锢着一只枯燥乏味，怯懦胆小的海龟
+[00:52:750]时光飞逝，无论我多么努力去尝试
+[00:55:590]我无法让我的心脏停止跳动
+[01:19:120]今天又是孤独的一天
+[01:21:540]我强装喜欢这样的日子
+[01:25:549]明天不会有任何改变
+[01:25:550]
+[01:28:030]我甚至无法忆起你的名字
+[01:31:739]你已离我而去
+[01:31:740]
+[01:36:519]你已离我而去
+[01:36:520]
+[01:39:640]但我的这份的爱意
+[01:42:629]永远无法停息
+[01:42:630]
+[02:00:828]没有人与我共同分担
+[02:00:830]
+[02:03:700]这沉重又空虚的壳
+[02:07:328]但我不会再朽烂在这空虚的时光中
+[02:07:330]
+[02:10:139]亲爱的，你还未发现吗。我已经成长了很多
+[02:10:140]
+[02:13:819]可能你已经原谅了我
+[02:13:820]
+[02:16:579]但亲爱的，请你确保
+[02:16:580]
+[02:20:209]将我碎尸万段，千刀万剐
+[02:20:210]
+[02:22:959]正如你看到的
+[02:22:960]
+[02:23:489]无论我如何尝试，我的心脏无法停止跳动
+[02:23:490]
+[02:33:229]Oh
+[02:33:230]
 

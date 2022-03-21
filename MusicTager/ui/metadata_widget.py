@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
+import re
 import os
 import sys
 import time
@@ -137,6 +138,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.search_event()
 
     def show_warning_event(self, msg):
+        """显示警告窗口"""
         self.warning_dialog.set_text(msg)
         if not self.warning_dialog.isVisible():
             # for _dialog in (self.setting_dialog, self.modify_dialog, self.auto_dialog):
@@ -148,6 +150,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             self.warning_dialog.show()
 
     def write_metadata(self, item_row, song_info, song_id_or_md5, *, pic_path: str = None):
+        """结合ui数据写入元数据"""
         item = self.file_listWidget.item(item_row)
         file_path = item.text()
         try:
@@ -178,7 +181,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         if self.song_info:
             row = self.file_listWidget.currentRow()
             song_id_or_md5 = self.search_tableWidget.item(self.search_tableWidget.currentItem().row(), 3).text()
-            self.write_metadata(row, self.song_info, song_id_or_md5,pic_path=pic_path)
+            self.write_metadata(row, self.song_info, song_id_or_md5, pic_path=pic_path)
             self.song_info = None
             self.file_listWidget.setCurrentRow(self.file_listWidget.currentRow() + 1)
             if self.file_listWidget.selectedItems():
@@ -207,6 +210,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.write_event(pic_path=pic_path)
 
     def _setting_done_event(self, setting: dialog.setting_dialog.Setting) -> None:
+        """从设置对话框中获取数据载入"""
         self.api_mode = setting.api_mode
         self.is_download_lrc = setting.is_lyric
         self.is_rename = setting.is_rename
@@ -226,10 +230,12 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         t.start()
 
     def _thread_auto_complete(self):
+        """自动补全元数据"""
         self.stop_auto = False
         start_index = self.file_listWidget.currentRow()
         total_num = self.file_listWidget.count()
-        path_list = [self.file_listWidget.item(i).text() for i in range(start_index, total_num)]
+        rows = range(start_index, total_num)
+        path_list = [self.file_listWidget.item(i).text() for i in rows]
         if self.api_mode == ApiMode.CLOUD:
             search_func = self.cloud_api.search_data
             search_info_func = self.cloud_api.get_song_info
@@ -242,7 +248,8 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.auto_dialog.set_max(total_num - 1)
         self.auto_dialog_show_signal.emit("")
         try:
-            for row, file_path in enumerate(path_list):
+            for row, file_path in zip(rows, path_list):
+                print(row)
                 if self.stop_auto:
                     self.auto_dialog.prepare_close_signal.emit("")
                     break
@@ -253,7 +260,6 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
                     keyword = os.path.splitext(file_path)[0]
                 try:
                     search_data = search_func(keyword)
-
                 except api.NoneResultError:
                     search_data = []
                 if search_data:
@@ -290,6 +296,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             self.file_listWidget.setEnabled(True)
 
     def _load_song_info(self) -> None:
+        """加载搜索结果的数据到ui"""
         self.set_left_text(self.result_genre_label, 'N/A')
         self.set_left_text(self.result_year_label, self.song_info.year)
         self.set_left_text(self.result_album_label, self.song_info.album)
@@ -318,7 +325,9 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             raise ValueError("api_mode参数错误，未知的模式")
         if not os.path.exists(LRC_PATH):
             os.makedirs(LRC_PATH)
-        lrc_file.save_to_mrc(LRC_PATH + save_name + '.txt')
+        path = LRC_PATH + save_name + '.txt'
+        path = re.sub(r"|[!@#$%^&*/]+", "", path)
+        lrc_file.save_to_mrc(path)
 
     @thread_drive(_load_search_data)
     def search_event(self, *args) -> None:
