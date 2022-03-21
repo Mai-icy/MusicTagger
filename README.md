@@ -13,7 +13,14 @@
 - 可以手动编辑元数据，自定义上传专辑图片
 - 可以补全mp3，flac, m4a文件
 - 可以下载歌词
-- 可以自动补全元数据
+- 可以自动补全元数据界面 Interface
+
+## 界面 Interface
+
+自动写入
+![2](https://github.com/Mai-icy/MusicTagger/blob/main/image-folder/test.gif)
+手动写入
+![1](https://github.com/Mai-icy/MusicTagger/blob/main/image-folder/test2.gif)
 
 ## 运行环境与依赖 Running environment and requirements
 
