@@ -24,7 +24,7 @@ class CloudMusicWebApi:
         :param song_id: song ID in API.
         :return: Filtered song information in dict.
         """
-        res_json = requests.post(self._song_info_url.format(song_id, song_id)).json()
+        res_json = requests.post(self._song_info_url.format(song_id, song_id), timeout=4).json()
         if res_json['code'] == 400:
             raise requests.RequestException
         song_json = res_json['songs'][0]
@@ -34,7 +34,7 @@ class CloudMusicWebApi:
 
         pic_url = song_json["album"]["picUrl"]
 
-        pic_data = requests.get(pic_url).content
+        pic_data = requests.get(pic_url, timeout=4).content
         pic_buffer = io.BytesIO(pic_data)
 
         song_info = {
@@ -58,7 +58,7 @@ class CloudMusicWebApi:
         :return: A list containing brief information about the search results.
         """
         keyword = re.sub(r"|[!@#$%^&*/]+", "", keyword)
-        res_json = requests.post(self._search_url.format(keyword, page * 20)).json()
+        res_json = requests.post(self._search_url.format(keyword, page * 20), timeout=4).json()
         res_list = []
         if res_json["result"] == {} or res_json['code'] == 400 or res_json["result"]['songCount'] == 0:  # 该关键词没有结果数据
             raise NoneResultError
@@ -79,11 +79,8 @@ class CloudMusicWebApi:
     def get_lrc(self, song_id: str) -> LrcFile:
         """
         Download the lyrics file of the corresponding song.
-
-        :param song_id:
-        :return:
         """
-        res_json = requests.get(self._download_lrc_url.format(song_id)).json()
+        res_json = requests.get(self._download_lrc_url.format(song_id), timeout=4).json()
         lrc_file = LrcFile()
         lrc_file.load_content(res_json['lrc']['lyric'], 'non')
         if res_json.get('tlyric', None):
@@ -98,7 +95,7 @@ if __name__ == '__main__':
     a = CloudMusicWebApi()
     print(a.search_data('mili'))
     # print(a.search_data('CheerS-Claris', 0))
-    b = a.get_song_info("1900488879")
-    print(b)
+    # b = a.get_song_info("1900488879")
+    # print(b)
     # print(b.get_content('romaji'))
     # a.download_lrc(1887467089)

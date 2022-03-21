@@ -35,7 +35,7 @@ class KugouApi:
         """
         keyword = re.sub(r"|[!@#$%^&*/]+", "", keyword)
         url = self._get_hash_search_url.format(keyword, page)
-        res_json = requests.get(url, headers=header).json()
+        res_json = requests.get(url, headers=header, timeout=4).json()
         song_info_list = []
         self.total_num = res_json['data']['total']
         for data in res_json['data']['info']:
@@ -58,7 +58,7 @@ class KugouApi:
         :param md5: md5 of song.
         :return: Filtered song information in dict.
         """
-        song_json = requests.get(self._song_info_url.format(md5), headers=header).json()
+        song_json = requests.get(self._song_info_url.format(md5), headers=header, timeout=4).json()
         duration = song_json["timeLength"]
         album_img = str(song_json["album_img"])
 
@@ -67,13 +67,13 @@ class KugouApi:
             album = None
             year = None
         else:
-            album_json = requests.get(self._album_info_url.format(album_id), headers=header).json()
+            album_json = requests.get(self._album_info_url.format(album_id), headers=header, timeout=4).json()
             album = album_json["data"].get("albumname", None)
             year = album_json["data"].get("publishtime", None)
 
         pic_url = album_img.replace("/{size}/", "/")
         if pic_url:
-            pic_data = requests.get(pic_url).content
+            pic_data = requests.get(pic_url, timeout=4).content
             pic_buffer = io.BytesIO(pic_data)
         else:
             pic_buffer = io.BytesIO()
@@ -97,7 +97,7 @@ class KugouApi:
         :return: Contains a list of basic lyrics data.
         """
         url = self._get_key_search_url.format(md5)
-        res_json = requests.get(url, headers=header).json()
+        res_json = requests.get(url, headers=header, timeout=4).json()
         if res_json['errcode'] != 200:
             raise requests.RequestException
         res_list = []
@@ -125,7 +125,7 @@ class KugouApi:
         :return: Content of the lyrics.
         """
         url = self._get_lrc_url.format(lyric_info["id"], lyric_info["key"], 'krc')
-        res_json = requests.get(url).json()
+        res_json = requests.get(url, timeout=4).json()
         content = res_json['content']
         result = base64.b64decode(content.encode())
 

@@ -14,12 +14,7 @@ from tinytag import TinyTag
 
 
 def get_md5(file: str) -> str:
-    """
-    Get the md5code of file.
-
-    :param file: The path of file.
-    :return: The md5code of file
-    """
+    """获取文件的md5值"""
     m = hashlib.md5()
     with open(file, 'rb') as f:
         for line in f:
@@ -29,13 +24,7 @@ def get_md5(file: str) -> str:
 
 
 def get_album_buffer(path: str) -> io.BytesIO:
-    """
-    Get the album image of id3 tag and save it to temporary buffer.
-    If it is FLAC, read the last of flAC's multiple images.
-
-    :param path: The path of the file.
-    :return: resulting image buffer.
-    """
+    """获取文件的封面数据，并保存到io缓冲"""
     if not os.path.exists(path):
         raise FileNotFoundError(f"No such file or directory: '{path}', can't get pic buffer.")
     buffer = io.BytesIO()
@@ -55,18 +44,13 @@ def get_album_buffer(path: str) -> io.BytesIO:
         audio = FLAC(path)
         if len(audio.pictures) == 0:
             return buffer
-        else:  # Flac can contain multiple images, the last of which is read here
+        else:  # flac可以有多个图片，这里只读取一个
             buffer.write(audio.pictures[-1].data)
     return buffer
 
 
 def read_song_metadata(path: str) -> (SongInfo, SongElseInfo):
-    """
-    Get the metadata of the song.
-
-    :param path: The path of the song.
-    :return: The metadata of the song which is a dict.
-    """
+    """获取文件的元数据"""
     tag = TinyTag.get(path)
     suffix = os.path.splitext(path)[-1]
     file_name = os.path.splitext(os.path.basename(path))[0]
@@ -108,13 +92,7 @@ def read_song_metadata(path: str) -> (SongInfo, SongElseInfo):
 
 if __name__ == '__main__':
     print(read_song_metadata(r'Z:\KuGou\2021.6.21\まふまふ - 空腹.mp3'))
-    print(read_song_metadata("..//DECO27 - パラサイト feat. 初音ミク.mp4"))
-
     # get_album_pic(r'Z:\KuGou\2021.5.1\神山羊 - Laundry.mp3')
     # get_album_pic(r'Z:\KuGou\2021.5.1\ずっと真夜中でいいのに。 - 眩しいDNAだけ.mp3')
     # get_album_pic(r'Z:\KuGou\2021.5.1\Perfume - 再生.mp3')
-    # get_song_metadata(r'Z:\KuGou\2021.8.5\サカナクション - 夜の踊り子 (深夜的舞女).mp3')
-    # get_song_metadata(r'Z:\.....机房共享文件\flac歌曲\YOASOBI\03.ハルジオン.flac')
-    # get_song_metadata(r'Z:\.....机房共享文件\flac歌曲\ずっと真夜中でいいのに。\01_01_ばかじゃないのに_ずっと真夜中でいいのに。.wav')
-    # get_len_time(r'Z:\.....机房共享文件\flac歌曲\ずっと真夜中でいいのに。\01_01_ばかじゃないのに_ずっと真夜中でいいのに。.wav')
     # print(base_name_parse(r'Z:\KuGou\2021.8.5\サカナクション - 夜の踊り子 (深夜的舞女).mp3'))
