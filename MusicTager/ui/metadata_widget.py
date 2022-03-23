@@ -23,7 +23,6 @@ LRC_PATH = "download\\"
 
 
 class MetadataWidget(QWidget, Ui_MetadataWidget):
-    double_click_signal = pyqtSignal(str)
     warning_dialog_show_signal = pyqtSignal(str)
     auto_dialog_show_signal = pyqtSignal(str)
 
@@ -171,8 +170,9 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         if self.is_rename:
             dir_name = os.path.dirname(file_path)
             suffix = os.path.splitext(file_path)[-1]
-            new_name = ' - '.join([song_info.singer, song_info.songName]) + suffix
-            new_path = os.path.join(dir_name, new_name)
+            new_name = ' - '.join([song_info.singer, song_info.songName])
+            new_name = re.sub(r"|[?\\/*<>|:\"]+", "", new_name)
+            new_path = os.path.join(dir_name, new_name + suffix)
             os.rename(file_path, new_path)
             item.setText(new_path)
 
@@ -325,8 +325,8 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             raise ValueError("api_mode参数错误，未知的模式")
         if not os.path.exists(LRC_PATH):
             os.makedirs(LRC_PATH)
+        save_name = re.sub(r"|[?\\/*<>|:\"]+", "", save_name)
         path = LRC_PATH + save_name + '.txt'
-        path = re.sub(r"|[!@#$%^&*/]+", "", path)
         lrc_file.save_to_mrc(path)
 
     @thread_drive(_load_search_data)
