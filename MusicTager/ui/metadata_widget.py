@@ -99,6 +99,9 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.search_tableWidget.setColumnWidth(2, 55)
         self.search_tableWidget.setColumnWidth(3, 55)
 
+        self.setAcceptDrops(True)
+        self.search_tableWidget.setAcceptDrops(True)  # 允许文件拖入
+
         column_text_list = ['曲名', '歌手', '时长', 'id']
         for column in range(0, 4):
             item = QTableWidgetItem()
@@ -370,6 +373,26 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         new_text = metrics.elidedText(text, Qt.ElideRight, label.width())
         label.setText(new_text)
 
+    def dragEnterEvent(self, a0: QDragEnterEvent) -> None:
+        accept_format = (".flac", ".mp3", ".m4a", ".mp4")
+
+        def check_suffix(q_url) -> bool:
+            for suffix in accept_format:
+                if q_url.fileName().endswith(suffix):
+                    return True
+            return False
+
+        if len(a0.mimeData().urls()) == 0:
+            a0.ignore()
+        elif all(check_suffix(file) for file in a0.mimeData().urls()):
+            a0.acceptProposedAction()
+        else:
+            a0.ignore()
+
+    def dropEvent(self, a0: QDropEvent) -> None:
+        for q_url in a0.mimeData().urls():
+            self.file_listWidget.addItem(q_url.toLocalFile())
+
 
 if __name__ == "__main__":
     # 适配2k等高分辨率屏幕,低分辨率屏幕可以缺省
@@ -378,8 +401,6 @@ if __name__ == "__main__":
     myWin = MetadataWidget()
     myWin.show()
     sys.exit(app.exec_())
-
-
 
 
 
