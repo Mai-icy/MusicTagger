@@ -122,22 +122,27 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
 
     def path_click_event(self, item) -> None:
         """解析选中的文件，并搜索关键词"""
-        song_info, else_info = sm.read_song_metadata(item.text())
-        self.set_left_text(self.path_label, else_info.songPath)
-        self.set_left_text(self.filename_label, os.path.basename(item.text()))
-        self.set_left_text(self.original_song_name_label, song_info.songName)
-        self.set_left_text(self.original_singer_label, song_info.singer)
-        self.set_left_text(self.original_duration_label, song_info.duration)
-        self.set_left_text(self.original_md5_label, else_info.md5)
-        if song_info.singer and song_info.songName:
-            # keyword = os.path.splitext(item.text())[0]
-            keyword = '-'.join([song_info.singer, song_info.songName])
-        else:
-            keyword = os.path.splitext(item.text())[0]
-        self.search_lineEdit.setText(keyword)
-        self.file_listWidget.setEnabled(False)  # 搜索完成后解放
-        self.search_tableWidget.setEnabled(False)
-        self.search_event()
+        try:
+            song_info, else_info = sm.read_song_metadata(item.text())
+            self.set_left_text(self.path_label, else_info.songPath)
+            self.set_left_text(self.filename_label, os.path.basename(item.text()))
+            self.set_left_text(self.original_song_name_label, song_info.songName)
+            self.set_left_text(self.original_singer_label, song_info.singer)
+            self.set_left_text(self.original_duration_label, song_info.duration)
+            self.set_left_text(self.original_md5_label, else_info.md5)
+            if song_info.singer and song_info.songName:
+                # keyword = os.path.splitext(item.text())[0]
+                keyword = '-'.join([song_info.singer, song_info.songName])
+            else:
+                keyword = os.path.splitext(item.text())[0]
+            self.search_lineEdit.setText(keyword)
+            self.file_listWidget.setEnabled(False)  # 搜索完成后解放
+            self.search_tableWidget.setEnabled(False)
+            self.search_event()
+        except Exception as e:
+            self.warning_dialog_show_signal.emit(repr(e))
+            item.setBackground(QColor(Qt.red))
+            return
 
     def show_warning_event(self, msg):
         """显示警告窗口"""
@@ -157,27 +162,28 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         file_path = item.text()
         try:
             format_change = sm.write_song_metadata(file_path, song_info, pic_path=pic_path)
+
+            if format_change:
+                old_format, new_format = format_change
+                self.warning_dialog_show_signal.emit(f"检测到文件格式有误，\n已从{old_format}修改为{new_format}.")
+                item.setBackground(QColor(Qt.red))
+            else:
+                item.setBackground(QColor(Qt.lightGray))
+            if self.is_download_lrc:
+                time.sleep(0.1)
+                self.download_lrc(song_id_or_md5, ' - '.join([song_info.singer, song_info.songName]))
+            if self.is_rename:
+                dir_name = os.path.dirname(file_path)
+                suffix = os.path.splitext(file_path)[-1]
+                new_name = ' - '.join([song_info.singer, song_info.songName])
+                new_name = re.sub(r"|[?\\/*<>|:\"]+", "", new_name)
+                new_path = os.path.join(dir_name, new_name + suffix)
+                os.rename(file_path, new_path)
+                item.setText(new_path)
         except Exception as e:
-            self.show_warning_event(repr(e))
+            self.warning_dialog_show_signal.emit(repr(e))
             item.setBackground(QColor(Qt.red))
             return
-        if format_change:
-            old_format, new_format = format_change
-            self.show_warning_event(f"检测到文件格式有误，\n已从{old_format}修改为{new_format}.")
-            item.setBackground(QColor(Qt.red))
-        else:
-            item.setBackground(QColor(Qt.lightGray))
-        if self.is_download_lrc:
-            time.sleep(0.1)
-            self.download_lrc(song_id_or_md5, ' - '.join([song_info.singer, song_info.songName]))
-        if self.is_rename:
-            dir_name = os.path.dirname(file_path)
-            suffix = os.path.splitext(file_path)[-1]
-            new_name = ' - '.join([song_info.singer, song_info.songName])
-            new_name = re.sub(r"|[?\\/*<>|:\"]+", "", new_name)
-            new_path = os.path.join(dir_name, new_name + suffix)
-            os.rename(file_path, new_path)
-            item.setText(new_path)
 
     def write_event(self, *, pic_path: str = None) -> None:
         """写入元数据，item的背景颜色会根据写入结果改变颜色，并指向下一个选项"""
@@ -346,6 +352,10 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
                     raise ValueError("api_mode参数错误，未知的模式")
             except api.NoneResultError:
                 self.search_data = []
+            except Exception as e:
+                self.warning_dialog_show_signal.emit(repr(e))
+                self.search_data = []
+                return
 
     @thread_drive(_load_song_info)
     def result_click_event(self, item) -> None:

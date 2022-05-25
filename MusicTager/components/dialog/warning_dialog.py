@@ -12,9 +12,11 @@ class WarningDialog(QDialog, Ui_WarningDialog):
     def __init__(self, parent=None):
         super(WarningDialog, self).__init__(parent)
         self.setupUi(self)
+        self.warning_label.setWordWrap(True)
 
     def set_text(self, msg):
         self.warning_label.setText(msg)
+        self.adjustSize()
 
     def show(self) -> None:
         self._set_mask_visible(True)
