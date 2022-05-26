@@ -25,8 +25,8 @@ class CloudMusicWebApi:
         :return: Filtered song information in dict.
         """
         res_json = requests.post(self._song_info_url.format(song_id, song_id), timeout=4).json()
-        if res_json['code'] == 400:
-            raise requests.RequestException
+        if res_json['code'] == 400 or res_json['code'] == 406:
+            raise requests.RequestException("访问过于频繁或接口失效")
         song_json = res_json['songs'][0]
         artists_list = [info["name"] for info in song_json["artists"]]
         # todo genre 曲目风格在json中并未找到

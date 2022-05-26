@@ -258,7 +258,6 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.auto_dialog_show_signal.emit("")
         try:
             for row, file_path in zip(rows, path_list):
-                print(row)
                 if self.stop_auto:
                     self.auto_dialog.prepare_close_signal.emit("")
                     break

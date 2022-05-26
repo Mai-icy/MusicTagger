@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 from PyQt5.QtCore import QThread, pyqtSignal
 from functools import wraps, partial
+from types import MethodType
 
 
 def thread_drive(done_emit_func):
@@ -11,7 +12,7 @@ def thread_drive(done_emit_func):
         def wrapper(self, *args, **kwargs):
             self.work_thread = WorkThread(func, self, *args, **kwargs)
             if done_emit_func:
-                res_func = partial(done_emit_func, self)
+                res_func = MethodType(done_emit_func, self)
                 self.work_thread.finished.connect(res_func)
             self.work_thread.start()
         return wrapper
