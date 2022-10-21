@@ -36,6 +36,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.auto_dialog = dialog.AutoMetadataDialog(self)
         self.cloud_api = api.CloudMusicWebApi()
         self.kugou_api = api.KugouApi()
+        self.spotify_api = api.SpotifyApi()
 
         self._init_signal()
         self._init_table_widgets()
@@ -251,6 +252,9 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         elif self.api_mode == ApiMode.KUGOU:
             search_func = self.kugou_api.search_hash
             search_info_func = self.kugou_api.get_song_info
+        elif self.api_mode == ApiMode.SPOTIFY:
+            search_func = self.spotify_api.search_data
+            search_info_func = self.spotify_api.get_song_info
         else:
             raise ValueError("api_mode参数错误，未知的模式")
 
@@ -275,6 +279,10 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
                     score = sm.compare_song_info(song_info, res_info)
                     if score >= 80:
                         self.write_metadata(row, res_info, search_data[0].idOrMd5)
+                    elif len(search_data) > 1:
+                        res_info = search_info_func(search_data[1].idOrMd5)
+                        if score >= 80:
+                            self.write_metadata(row, res_info, search_data[1].idOrMd5)
                     self.auto_dialog.add_signal.emit("")
                 else:
                     self.auto_dialog.add_signal.emit("")
@@ -305,6 +313,8 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
 
     def _load_song_info(self) -> None:
         """加载搜索结果的数据到ui"""
+        if not self.song_info:
+            return
         self.set_left_text(self.result_genre_label, 'N/A')
         self.set_left_text(self.result_year_label, self.song_info.year)
         self.set_left_text(self.result_album_label, self.song_info.album)
@@ -315,6 +325,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             self.set_left_text(self.result_track_number_label, str(self.song_info.trackNumber[0]))
         else:
             self.set_left_text(self.result_track_number_label, "N/A")
+
         if self.song_info.picBuffer.getvalue():
             pix = Image.open(self.song_info.picBuffer).toqpixmap()
             self.result_pic_label.setPixmap(pix)
@@ -329,6 +340,8 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         elif self.api_mode == ApiMode.KUGOU:
             lrc_info = self.kugou_api.get_lrc_info(md5_or_id)[0]
             lrc_file = self.kugou_api.get_lrc(lrc_info)
+        elif self.api_mode == ApiMode.SPOTIFY:
+            return
         else:
             raise ValueError("api_mode参数错误，未知的模式")
         if not os.path.exists(LRC_PATH):
@@ -347,6 +360,8 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
                     self.search_data = self.cloud_api.search_data(keyword)
                 elif self.api_mode == ApiMode.KUGOU:
                     self.search_data = self.kugou_api.search_hash(keyword)
+                elif self.api_mode == ApiMode.SPOTIFY:
+                    self.search_data = self.spotify_api.search_data(keyword)
                 else:
                     raise ValueError("api_mode参数错误，未知的模式")
             except api.NoneResultError:
@@ -362,14 +377,24 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.search_tableWidget.setEnabled(False)
         self.result_pic_label.clear()
         self.result_pic_label.setText("获取数据中")
-        if self.api_mode == ApiMode.CLOUD:
-            song_id = self.search_tableWidget.item(item.row(), 3).text()
-            self.song_info = self.cloud_api.get_song_info(song_id)
-        elif self.api_mode == ApiMode.KUGOU:
-            md5 = self.search_tableWidget.item(item.row(), 3).text()
-            self.song_info = self.kugou_api.get_song_info(md5)
-        else:
-            raise ValueError("api_mode参数错误，未知的模式")
+        try:
+            if self.api_mode == ApiMode.CLOUD:
+                song_id = self.search_tableWidget.item(item.row(), 3).text()
+                self.song_info = self.cloud_api.get_song_info(song_id)
+            elif self.api_mode == ApiMode.KUGOU:
+                md5 = self.search_tableWidget.item(item.row(), 3).text()
+                self.song_info = self.kugou_api.get_song_info(md5)
+            elif self.api_mode == ApiMode.SPOTIFY:
+                song_id = self.search_tableWidget.item(item.row(), 3).text()
+                self.song_info = self.spotify_api.get_song_info(song_id)
+            else:
+                raise ValueError("api_mode参数错误，未知的模式")
+        except api.NoneResultError:
+            self.search_data = []
+        except Exception as e:
+            self.warning_dialog_show_signal.emit(repr(e))
+            self.search_data = []
+            return
         self.search_tableWidget.setEnabled(True)
         self.file_listWidget.setEnabled(True)
 

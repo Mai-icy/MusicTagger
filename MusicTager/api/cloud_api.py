@@ -33,7 +33,7 @@ class CloudMusicWebApi:
         duration = song_json["duration"] // 1000
 
         pic_url = song_json["album"]["picUrl"]
-
+        print(pic_url)
         pic_data = requests.get(pic_url, timeout=4).content
         pic_buffer = io.BytesIO(pic_data)
 

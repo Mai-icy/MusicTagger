@@ -17,6 +17,7 @@ Setting = namedtuple("Setting", ["api_mode", "is_lyric", "is_rename", "auto_if"]
 class ApiMode(Enum):
     CLOUD = 0
     KUGOU = 1
+    SPOTIFY = 2
 
 
 class SettingDialog(QDialog, Ui_SettingDialog):
@@ -30,6 +31,17 @@ class SettingDialog(QDialog, Ui_SettingDialog):
 
     def _init_signal(self):
         self.auto_button.clicked.connect(self.auto_event)
+
+        self.api_comboBox.currentIndexChanged.connect(self.comboBox_event)
+
+    def comboBox_event(self):
+        """spotify暂时不支持下载歌词"""
+        if self.api_comboBox.currentIndex() == 2:  # 选中到spotify api，禁用打开自动下载歌词
+            self.is_download_lrc_checkBox.setChecked(False)
+            self.is_download_lrc_checkBox.setEnabled(False)
+        else:
+            if not self.is_download_lrc_checkBox.isEnabled():
+                self.is_download_lrc_checkBox.setEnabled(True)
 
     def auto_event(self):
         self.auto_if = True
