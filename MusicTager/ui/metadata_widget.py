@@ -34,6 +34,28 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         super(MetadataWidget, self).__init__(parent)
         self.setupUi(self)
 
+        # 动态创建缺失的LabeL
+        self.original_album_label = QLabel("N/A")
+        self.original_year_label = QLabel("N/A")
+        self.original_genre_label = QLabel("N/A")
+        self.original_pic_label = QLabel()
+        self.original_pic_label.setMinimumSize(140, 140)
+        self.original_pic_label.setMaximumSize(140, 140)
+        self.original_pic_label.setObjectName("original_pic_label")
+        self.original_pic_label.setScaledContents(True)
+
+        # 创建新的垂直布局来容纳新的LabeL
+        new_labels_layout = QVBoxLayout()
+        new_labels_layout.setObjectName("new_labels_layout")
+
+        # 将新的LabeL添加到新布局中
+        new_labels_layout.addWidget(self.create_metadata_layout("专栏", self.original_album_label))
+        new_labels_layout.addWidget(self.create_metadata_layout("年份", self.original_year_label))
+        new_labels_layout.addWidget(self.create_metadata_layout("流派", self.original_genre_label))
+        new_labels_layout.addWidget(self.create_metadata_layout("封面", self.original_pic_label))
+        
+        # 将新布局插入到现有的 verticalLayout_12 中
+        self.verticalLayout_12.addLayout(new_labels_layout)
         self.batch_modify_button = QPushButton("批量修改")
         self.batch_modify_button.setObjectName("batch_modify_button")
         self.batch_modify_button.setEnabled(False)
@@ -82,7 +104,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         """初始化信号"""
         self.add_file_button.clicked.connect(self.add_file_event)
         self.delete_file_button.clicked.connect(self.delete_file_event)
-        self.confirm_buton.clicked.connect(self._write_metadata_to_file)
+        self.confirm_buton.clicked.connect(self.write_event)
         self.search_button.clicked.connect(self.search_event)
         self.pass_button.clicked.connect(self.pass_event)
         self.modify_button.clicked.connect(self.modify_event)
@@ -156,7 +178,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         """解析选中的文件，并搜索关键词"""
         try:
             song_info, else_info = read_song_metadata(item.text())
-            self.show_metadata(song_info, item.text())
+            self.show_metadata(song_info, item.text(), song_info.picBuffer)
             self.set_left_text(self.original_md5_label, else_info.md5)
             keyword = self.generate_search_keyword(item.text(), song_info)
             self.search_lineEdit.setText(keyword)
@@ -213,8 +235,11 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         """写入元数据，item的背景颜色会根据写入结果改变颜色，并指向下一个选项"""
         if self.song_info:
             row = self.file_listWidget.currentRow()
+            if row == -1:
+                QMessageBox.warning(self, "提示", "请先在左侧列表中选择一个文件。")
+                return
             song_id_or_md5 = self.search_tableWidget.item(self.search_tableWidget.currentItem().row(), 3).text()
-            self.write_metadata(row, self.song_info, song_id_or_md5, pic_path=pic_path)
+            self._write_metadata_to_file(row, self.song_info, song_id_or_md5, pic_path=pic_path)
             self.song_info = None
             self.file_listWidget.setCurrentRow(self.file_listWidget.currentRow() + 1)
             if self.file_listWidget.selectedItems():
@@ -434,14 +459,23 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.search_tableWidget.setEnabled(True)
         self.file_listWidget.setEnabled(True)
 
-    @staticmethod
-    def set_left_text(label: QLabel, text: str) -> None:
-        """显示文件数据可复制并且多余字符用点代替"""
-        label.setTextInteractionFlags(Qt.TextSelectableByMouse)  # 设置label可复制
+    def set_left_text(self, label: QLabel, text: str) -> None:
+        """根据文本内容设置标签样式和文本，并处理长文本的显示。"""
+        label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        # 检查文本是否有效
+        if text and text.strip():
+            # 清除样式，恢复默认
+            label.setStyleSheet("")
+            display_text = text
+        else:
+            # 设置字体为红色
+            label.setStyleSheet("color: red;")
+            display_text = "N/A"
+
+        # 处理长文本的省略显示
         metrics = QFontMetrics(label.font())
-        text = text if text else "N/A"
-        new_text = metrics.elidedText(text, Qt.ElideRight, label.width())
-        label.setText(new_text)
+        elided_text = metrics.elidedText(display_text, Qt.ElideRight, label.width())
+        label.setText(elided_text)
 
     def dragEnterEvent(self, a0: QDragEnterEvent) -> None:
         accept_format = (".flac", ".mp3", ".m4a", ".mp4")
@@ -466,17 +500,37 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             item.setCheckState(Qt.Unchecked)
             self.file_listWidget.addItem(item)
 
-    def show_metadata(self, song_info: SongInfo, file_path: str = None):
-        """在UI上显示元数据信息"""
+    def show_metadata(self, song_info: SongInfo, file_path: str = None, pic_buffer=None):
+        """在UI上显示元数据信息，并根据数据是否缺失来改变UI反馈"""
         if file_path:
             self.set_left_text(self.path_label, file_path)
             self.set_left_text(self.filename_label, os.path.basename(file_path))
 
+        # 更新所有元数据标签
         self.set_left_text(self.original_song_name_label, song_info.songName)
         self.set_left_text(self.original_singer_label, song_info.singer)
+        self.set_left_text(self.original_album_label, song_info.album)
+        self.set_left_text(self.original_year_label, song_info.year)
+        self.set_left_text(self.original_genre_label, song_info.genre)
         self.set_left_text(self.original_duration_label, song_info.duration)
-        # MD5标签可能需要从其他地方获取，这里暂时留空或标记为N/A
-        self.set_left_text(self.original_md5_label, "N/A")
+
+        # 单独处理MD5，因为它来自else_info
+        # 注意：在调用此函数时，需要确保else_info是可用的，或者在这里处理它
+        # self.set_left_text(self.original_md5_label, "N/A") # 暂时保持
+
+        # 处理封面
+        if pic_buffer and pic_buffer.getvalue():
+            q_img = QImage.fromData(pic_buffer.getvalue())
+            if not q_img.isNull():
+                pix = QPixmap.fromImage(q_img)
+                self.original_pic_label.setPixmap(pix)
+                self.original_pic_label.setStyleSheet("")  # 清除边框
+            else:
+                self.original_pic_label.setText("图片无效")
+                self.original_pic_label.setStyleSheet("color: red; border: 1px solid red;")
+        else:
+            self.original_pic_label.setText("N/A")
+            self.original_pic_label.setStyleSheet("color: red; border: 1px solid red;")
 
     def generate_search_keyword(self, file_path: str, song_info: SongInfo) -> str:
         """根据歌曲信息或文件名生成搜索关键词"""
@@ -486,6 +540,17 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             # 如果没有元数据，则从文件名中提取关键词
             return os.path.splitext(os.path.basename(file_path))[0]
 
+
+    def create_metadata_layout(self, label_text, value_label):
+        """创建一个水平布局，用于显示元数据标签和值"""
+        layout = QHBoxLayout()
+        label = QLabel(label_text)
+        label.setFont(QFont("Adobe 黑体 Std R", 12))
+        layout.addWidget(label)
+        layout.addWidget(value_label)
+        container = QWidget()
+        container.setLayout(layout)
+        return container
     def batch_modify_metadata(self):
         """批量自动匹配元数据并写入"""
         checked_items = []
@@ -581,6 +646,3 @@ if __name__ == "__main__":
     myWin = MetadataWidget()
     myWin.show()
     sys.exit(app.exec_())
-
-
-

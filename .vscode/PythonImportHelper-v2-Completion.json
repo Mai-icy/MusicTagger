@@ -1478,7 +1478,7 @@
         "kind": 6,
         "importPath": "MusicTager.ui.metadata_widget",
         "description": "MusicTager.ui.metadata_widget",
-        "peekOfCode": "class MetadataWidget(QWidget, Ui_MetadataWidget):\n    warning_dialog_show_signal = pyqtSignal(str)\n    auto_dialog_show_signal = pyqtSignal(str)\n    def __init__(self, parent=None):\n        super(MetadataWidget, self).__init__(parent)\n        self.setupUi(self)\n        self.batch_modify_button = QPushButton(\"批量修改\")\n        self.batch_modify_button.setObjectName(\"batch_modify_button\")\n        self.batch_modify_button.setEnabled(False)\n        # 将新按钮插入到“设置”按钮之前",
+        "peekOfCode": "class MetadataWidget(QWidget, Ui_MetadataWidget):\n    warning_dialog_show_signal = pyqtSignal(str)\n    auto_dialog_show_signal = pyqtSignal(str)\n    def __init__(self, parent=None):\n        super(MetadataWidget, self).__init__(parent)\n        self.setupUi(self)\n        # 动态创建缺失的LabeL\n        self.original_album_label = QLabel(\"N/A\")\n        self.original_year_label = QLabel(\"N/A\")\n        self.original_genre_label = QLabel(\"N/A\")",
         "detail": "MusicTager.ui.metadata_widget",
         "documentation": {}
     },
@@ -1487,7 +1487,7 @@
         "kind": 5,
         "importPath": "MusicTager.ui.metadata_widget",
         "description": "MusicTager.ui.metadata_widget",
-        "peekOfCode": "LRC_PATH = \"download\\\\\"\nclass MetadataWidget(QWidget, Ui_MetadataWidget):\n    warning_dialog_show_signal = pyqtSignal(str)\n    auto_dialog_show_signal = pyqtSignal(str)\n    def __init__(self, parent=None):\n        super(MetadataWidget, self).__init__(parent)\n        self.setupUi(self)\n        self.batch_modify_button = QPushButton(\"批量修改\")\n        self.batch_modify_button.setObjectName(\"batch_modify_button\")\n        self.batch_modify_button.setEnabled(False)",
+        "peekOfCode": "LRC_PATH = \"download\\\\\"\nclass MetadataWidget(QWidget, Ui_MetadataWidget):\n    warning_dialog_show_signal = pyqtSignal(str)\n    auto_dialog_show_signal = pyqtSignal(str)\n    def __init__(self, parent=None):\n        super(MetadataWidget, self).__init__(parent)\n        self.setupUi(self)\n        # 动态创建缺失的LabeL\n        self.original_album_label = QLabel(\"N/A\")\n        self.original_year_label = QLabel(\"N/A\")",
         "detail": "MusicTager.ui.metadata_widget",
         "documentation": {}
     }
