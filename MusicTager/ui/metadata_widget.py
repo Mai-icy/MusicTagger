@@ -322,6 +322,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             self.warning_dialog_show_signal.emit(repr(e))
             item.setBackground(QColor(255, 100, 100, 100))
             return
+        self.metadata_cache.pop(file_path)
 
     def write_event(self, *, pic_path: str = None) -> None:
         """写入元数据，item的背景颜色会根据写入结果改变颜色，并指向下一个选项"""
