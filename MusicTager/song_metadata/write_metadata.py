@@ -53,6 +53,8 @@ def write_flac_metadata(song_path: str, song_info: SongInfo, pic_path: str = Non
         audio["DATE"] = song_info.year
     if song_info.genre:
         audio["GENRE"] = song_info.genre
+    if song_info.lyric:
+        audio["LYRICS"] = song_info.lyric
     pic = flac.Picture()
     pic.type = id3.PictureType.COVER_FRONT
     pic.width = 500
@@ -87,6 +89,8 @@ def write_mp3_metadata(song_path: str, song_info: SongInfo, pic_path: str = None
         audio["TYER"] = id3.TYER(text=song_info.year)
     if song_info.genre:
         audio["TCON"] = id3.TCON(text=song_info.genre)
+    if song_info.lyric:
+        audio.add(id3.USLT(encoding=3, lang='eng', desc='desc', text=song_info.lyric))
     if pic_path:
         mime = 'image/png' if pic_path.endswith("png") else 'image/jpeg'
         with open(pic_path, 'rb') as f:

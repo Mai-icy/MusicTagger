@@ -19,3 +19,7 @@ pywin32-ctypes==0.2.0
 requests==2.27.1
 tinytag==1.8.1
 urllib3==1.26.9
+
+python-Levenshtein
+
+python-Levenshtein
