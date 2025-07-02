@@ -36,7 +36,9 @@ class ModifyDialog(QDialog, Ui_ModifyDialog):
         pic_path = QFileDialog.getOpenFileName(self, u"打开图片文件", "", "image files(*.jpg,*.png)")[0]
         if not pic_path:
             return
-        pix = Image.open(pic_path).toqpixmap()
+        img = Image.open(pic_path)
+        q_img = QImage.fromData(img.getdata())
+        pix = QPixmap.fromImage(q_img)
 
         self.pic_label.setScaledContents(True)
         self.pic_label.setPixmap(pix)
@@ -62,8 +64,8 @@ class ModifyDialog(QDialog, Ui_ModifyDialog):
         if song_info.trackNumber:
             self.track_number_lineEdit.setText(song_info.trackNumber)
         if song_info.picBuffer.getvalue():
-            pic_data = Image.open(song_info.picBuffer)
-            q_image = ImageQt.toqpixmap(pic_data)
+            q_img = QImage.fromData(song_info.picBuffer.getvalue())
+            q_image = QPixmap.fromImage(q_img)
             self.pic_label.clear()
             self.pic_label.setPixmap(q_image)
 
