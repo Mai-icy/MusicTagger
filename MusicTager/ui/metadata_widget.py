@@ -34,52 +34,15 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
     def __init__(self, parent=None):
         super(MetadataWidget, self).__init__(parent)
         self.setupUi(self)
+        self._load_stylesheet()
 
         self.threads = []  # 用于跟踪所有工作线程
 
-        # 动态创建缺失的LabeL
-        self.original_album_label = QLabel("N/A")
-        self.original_year_label = QLabel("N/A")
-        self.original_genre_label = QLabel("N/A")
-        self.original_lyric_label = QLabel("N/A")
-        self.original_pic_label = QLabel()
-        self.original_pic_label.setMinimumSize(140, 140)
-        self.original_pic_label.setMaximumSize(140, 140)
-        self.original_pic_label.setObjectName("original_pic_label")
-        self.original_pic_label.setScaledContents(True)
-
-        # 创建新的垂直布局来容纳新的LabeL
-        new_labels_layout = QVBoxLayout()
-        new_labels_layout.setObjectName("new_labels_layout")
-
-        # 将新的LabeL添加到新布局中
-        new_labels_layout.addWidget(self.create_metadata_layout("专栏", self.original_album_label))
-        new_labels_layout.addWidget(self.create_metadata_layout("年份", self.original_year_label))
-        new_labels_layout.addWidget(self.create_metadata_layout("流派", self.original_genre_label))
-        new_labels_layout.addWidget(self.create_metadata_layout("歌词", self.original_lyric_label))
-        new_labels_layout.addWidget(self.create_metadata_layout("封面", self.original_pic_label))
+        self._init_ui_components()
+        self._init_layouts()
+        self._init_dialogs()
+        self._init_apis()
         
-        # 将新布局插入到现有的 verticalLayout_12 中
-        self.verticalLayout_12.addLayout(new_labels_layout)
-        self.batch_modify_button = QPushButton("批量修改")
-        self.batch_modify_button.setObjectName("batch_modify_button")
-        self.batch_modify_button.setEnabled(False)
-        # 将新按钮插入到“设置”按钮之前
-        button_layout = self.setting_button.parentWidget().layout()
-        setting_button_index = button_layout.indexOf(self.setting_button)
-        button_layout.insertWidget(setting_button_index, self.batch_modify_button)
-
-        self.select_all_checkbox = QCheckBox("全选")
-        self.horizontalLayout_2.addWidget(self.select_all_checkbox)
-
-        self.modify_dialog = dialog.ModifyDialog(self)
-        self.setting_dialog = dialog.SettingDialog(self)
-        self.warning_dialog = dialog.WarningDialog(self)
-        self.auto_dialog = dialog.AutoMetadataDialog(self)
-        self.cloud_api = api.CloudMusicWebApi()
-        self.kugou_api = api.KugouApi()
-        self.spotify_api = api.SpotifyApi()
-
         self.progress_dialog = QProgressDialog("正在批量处理...", "取消", 0, 100, self)
         self.progress_dialog.setWindowModality(Qt.WindowModal)
         self.progress_dialog.setAutoClose(True)
@@ -92,6 +55,82 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.search_data = []  # List[SongSearchInfo]
         self.song_info = None  # SongInfo
         self.stop_auto = False  # bool
+
+    def _load_stylesheet(self):
+        """加载QSS样式表"""
+        style_path = os.path.join(os.path.dirname(__file__), 'style.qss')
+        try:
+            with open(style_path, "r", encoding="utf-8") as f:
+                self.setStyleSheet(f.read())
+        except FileNotFoundError:
+            print(f"警告: 样式文件 'style.qss' 未找到。")
+
+    def _init_ui_components(self):
+        """初始化UI小部件"""
+        # 初始化所有在布局中需要的标签
+        self.path_label = QLabel("N/A")
+        self.filename_label = QLabel("N/A")
+        self.original_song_name_label = QLabel("N/A")
+        self.original_singer_label = QLabel("N/A")
+        self.original_album_label = QLabel("N/A")
+        self.original_year_label = QLabel("N/A")
+        self.original_genre_label = QLabel("N/A")
+        self.original_duration_label = QLabel("N/A")
+        self.original_lyric_label = QLabel("N/A")
+        self.original_md5_label = QLabel("N/A")
+
+        self.original_pic_label = QLabel()
+        self.original_pic_label.setMinimumSize(140, 140)
+        self.original_pic_label.setMaximumSize(140, 140)
+        self.original_pic_label.setObjectName("original_pic_label")
+        self.original_pic_label.setScaledContents(True)
+
+        self.result_song_name_label = QLabel("N/A")
+        self.result_singer_label = QLabel("N/A")
+        self.result_album_label = QLabel("N/A")
+
+    def _init_layouts(self):
+        """初始化布局"""
+        # 原始元数据布局
+        original_form_layout = QFormLayout(self.groupBox)
+        original_form_layout.setObjectName("original_form_layout")
+        original_form_layout.addRow("路径:", self.path_label)
+        original_form_layout.addRow("文件名:", self.filename_label)
+        original_form_layout.addRow("曲名:", self.original_song_name_label)
+        original_form_layout.addRow("歌手:", self.original_singer_label)
+        original_form_layout.addRow("专辑:", self.original_album_label)
+        original_form_layout.addRow("年份:", self.original_year_label)
+        original_form_layout.addRow("流派:", self.original_genre_label)
+        original_form_layout.addRow("时长:", self.original_duration_label)
+        original_form_layout.addRow("歌词:", self.original_lyric_label)
+        original_form_layout.addRow("MD5:", self.original_md5_label)
+        original_form_layout.addRow("封面:", self.original_pic_label)
+
+        # 搜索结果布局已在 setupUi 中大部分完成
+        # 这里仅作确认和微调
+        if not self.groupBox_2.layout():
+             # 如果groupBox_2没有布局，则创建一个新的
+            result_layout = QHBoxLayout(self.groupBox_2)
+            result_layout.addWidget(self.result_pic_label)
+            details_layout = QFormLayout()
+            details_layout.addRow("曲名:", self.result_song_name_label)
+            details_layout.addRow("歌手:", self.result_singer_label)
+            details_layout.addRow("专辑:", self.result_album_label)
+            # 添加其他需要的标签
+            result_layout.addLayout(details_layout)
+
+    def _init_dialogs(self):
+        """初始化对话框"""
+        self.modify_dialog = dialog.ModifyDialog(self)
+        self.setting_dialog = dialog.SettingDialog(self)
+        self.warning_dialog = dialog.WarningDialog(self)
+        self.auto_dialog = dialog.AutoMetadataDialog(self)
+
+    def _init_apis(self):
+        """初始化API客户端"""
+        self.cloud_api = api.CloudMusicWebApi()
+        self.kugou_api = api.KugouApi()
+        self.spotify_api = api.SpotifyApi()
 
     def _init_setting(self):
         """初始化设置"""
@@ -224,7 +263,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             self.search_event()
         except Exception as e:
             self.warning_dialog_show_signal.emit(repr(e))
-            current_item.setBackground(QColor(Qt.red))
+            current_item.setBackground(QColor(255, 100, 100, 100)) # 使用更柔和的红色
             return
 
     def show_warning_event(self, msg):
@@ -249,9 +288,9 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             if format_change:
                 old_format, new_format = format_change
                 self.warning_dialog_show_signal.emit(f"检测到文件格式有误，\n已从{old_format}修改为{new_format}.")
-                item.setBackground(QColor(Qt.red))
+                item.setBackground(QColor(255, 100, 100, 100)) # 使用更柔和的红色
             else:
-                item.setBackground(QColor(Qt.lightGray))
+                item.setBackground(QColor(211, 211, 211, 150)) # 使用柔和的灰色
             if self.is_lrc:
                 time.sleep(0.1)
                 self.download_lrc(song_id_or_md5, ' - '.join([song_info.singer, song_info.songName]))
@@ -265,7 +304,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
                 item.setText(new_path)
         except Exception as e:
             self.warning_dialog_show_signal.emit(repr(e))
-            item.setBackground(QColor(Qt.red))
+            item.setBackground(QColor(255, 100, 100, 100))
             return
 
     def write_event(self, *, pic_path: str = None) -> None:
@@ -503,11 +542,10 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         # 检查文本是否有效
         if text and text.strip():
             # 清除样式，恢复默认
-            label.setStyleSheet("")
+            label.setStyleSheet("")  # QSS会处理默认颜色
             display_text = text
         else:
-            # 设置字体为红色
-            label.setStyleSheet("color: red;")
+            label.setStyleSheet("color: #d9534f;") # 使用更柔和的红色
             display_text = "N/A"
 
         # 处理长文本的省略显示
@@ -558,7 +596,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             self.original_lyric_label.setStyleSheet("")
         else:
             self.original_lyric_label.setText("无")
-            self.original_lyric_label.setStyleSheet("color: red;")
+            self.original_lyric_label.setStyleSheet("color: #d9534f;")
 
         # 单独处理MD5，因为它来自else_info
         # 注意：在调用此函数时，需要确保else_info是可用的，或者在这里处理它
@@ -570,13 +608,13 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             if not q_img.isNull():
                 pix = QPixmap.fromImage(q_img)
                 self.original_pic_label.setPixmap(pix)
-                self.original_pic_label.setStyleSheet("")  # 清除边框
+                self.original_pic_label.setStyleSheet("")  # 样式由QSS控制
             else:
                 self.original_pic_label.setText("图片无效")
-                self.original_pic_label.setStyleSheet("color: red; border: 1px solid red;")
+                # QSS会处理错误状态的样式，这里可以留空或设置特定对象名
         else:
             self.original_pic_label.setText("N/A")
-            self.original_pic_label.setStyleSheet("color: red; border: 1px solid red;")
+            # QSS会处理默认/空状态的样式
 
     def generate_search_keyword(self, file_path: str, song_info: SongInfo) -> str:
         """根据歌曲信息或文件名生成搜索关键词"""
@@ -585,18 +623,6 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         else:
             # 如果没有元数据，则从文件名中提取关键词
             return os.path.splitext(os.path.basename(file_path))[0]
-
-
-    def create_metadata_layout(self, label_text, value_label):
-        """创建一个水平布局，用于显示元数据标签和值"""
-        layout = QHBoxLayout()
-        label = QLabel(label_text)
-        label.setFont(QFont("Adobe 黑体 Std R", 12))
-        layout.addWidget(label)
-        layout.addWidget(value_label)
-        container = QWidget()
-        container.setLayout(layout)
-        return container
     def batch_modify_metadata(self):
         """批量自动匹配元数据并写入"""
         checked_items = []

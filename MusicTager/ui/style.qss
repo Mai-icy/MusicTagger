@@ -1,0 +1,103 @@
+/* MusicTagger 应用程序样式表 */
+
+/* 全局字体和背景颜色 */
+QWidget {
+    font-family: "Microsoft YaHei UI", "Segoe UI", Arial, sans-serif;
+    font-size: 10pt;
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* 按钮样式 */
+QPushButton {
+    background-color: #0078d4;
+    color: white;
+    border: 1px solid #005a9e;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #005a9e;
+}
+
+QPushButton:pressed {
+    background-color: #003e6e;
+}
+
+QPushButton:disabled {
+    background-color: #a0a0a0;
+    color: #f0f0f0;
+    border-color: #909090;
+}
+
+/* 标签样式 */
+QLabel {
+    padding: 2px;
+}
+
+#original_pic_label, #result_pic_label {
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+/* 输入框样式 */
+QLineEdit {
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+QLineEdit:focus {
+    border-color: #0078d4;
+}
+
+/* 表格和列表样式 */
+QTableWidget, QListWidget {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #ffffff;
+    alternate-background-color: #f7f7f7; /* 交替行颜色 */
+}
+
+QHeaderView::section {
+    background-color: #e8e8e8;
+    padding: 4px;
+    border: 1px solid #d0d0d0;
+    font-weight: bold;
+}
+
+QTableWidget::item, QListWidget::item {
+    padding: 5px;
+}
+
+QTableWidget::item:selected, QListWidget::item:selected {
+    background-color: #0078d4;
+    color: white;
+}
+
+/* 复选框样式 */
+QCheckBox {
+    spacing: 5px;
+}
+
+QCheckBox::indicator {
+    width: 16px;
+    height: 16px;
+}
+
+/* 进度条样式 */
+QProgressBar {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+}
+
+QProgressBar::chunk {
+    background-color: #0078d4;
+    width: 10px; /* 控制块的宽度 */
+    margin: 1px;
+}
