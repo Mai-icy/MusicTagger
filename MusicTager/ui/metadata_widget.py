@@ -4,6 +4,7 @@ import re
 import os
 import sys
 import time
+import json
 import threading
 
 from PIL import Image
@@ -13,10 +14,13 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 import api
-import song_metadata as sm
+from song_metadata.compare_metadata import compare_song_info
+from song_metadata.metadata_type import SongInfo
 from components import dialog
 from components.work_thread import thread_drive
 from components.dialog.setting_dialog import ApiMode
+from song_metadata.read_metadata import read_song_metadata
+from song_metadata.write_metadata import write_song_metadata
 from ui.ui_source.MetadataWidget import Ui_MetadataWidget
 
 LRC_PATH = "download\\"
@@ -29,6 +33,14 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
     def __init__(self, parent=None):
         super(MetadataWidget, self).__init__(parent)
         self.setupUi(self)
+
+        self.batch_modify_button = QPushButton("批量修改")
+        self.batch_modify_button.setObjectName("batch_modify_button")
+        self.batch_modify_button.setEnabled(False)
+        # 将新按钮插入到“设置”按钮之前
+        button_layout = self.setting_button.parentWidget().layout()
+        setting_button_index = button_layout.indexOf(self.setting_button)
+        button_layout.insertWidget(setting_button_index, self.batch_modify_button)
 
         self.modify_dialog = dialog.ModifyDialog(self)
         self.setting_dialog = dialog.SettingDialog(self)
@@ -50,19 +62,34 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         """初始化设置"""
         self.api_mode = ApiMode(0)
         self.is_rename = False
-        self.is_download_lrc = False
+        self.is_lrc = False
         self.result_pic_label.setScaledContents(True)
+        self._load_config()
+
+    def _load_config(self):
+        """加载用户设置"""
+        try:
+            config_path = os.path.join(os.path.dirname(__file__), '..', '..', 'config.json')
+            with open(config_path, "r", encoding="utf-8") as f:
+                config = json.load(f)
+            self.api_mode = ApiMode(config.get("api_mode", 0))
+            self.is_rename = config.get("is_rename", False)
+            self.is_lrc = config.get("is_lrc", False)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"配置文件加载失败: {e}")
 
     def _init_signal(self):
         """初始化信号"""
         self.add_file_button.clicked.connect(self.add_file_event)
         self.delete_file_button.clicked.connect(self.delete_file_event)
-        self.confirm_buton.clicked.connect(self.write_event)
+        self.confirm_buton.clicked.connect(self._write_metadata_to_file)
         self.search_button.clicked.connect(self.search_event)
         self.pass_button.clicked.connect(self.pass_event)
         self.modify_button.clicked.connect(self.modify_event)
         self.setting_button.clicked.connect(self.setting_dialog.show)
 
+        self.batch_modify_button.clicked.connect(self.batch_modify_metadata)
+        self.file_listWidget.itemChanged.connect(self.on_item_changed)
         self.file_listWidget.itemClicked.connect(self.path_click_event)
         self.search_tableWidget.itemClicked.connect(self.result_click_event)
 
@@ -113,7 +140,11 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
     def add_file_event(self) -> None:
         """打开并添加文件"""
         file_name_list = QFileDialog.getOpenFileNames(self, u"打开文件", "", "Music files(*.mp3 *.flac)")[0]
-        self.file_listWidget.addItems(file_name_list)
+        for file_path in file_name_list:
+            item = QListWidgetItem(file_path)
+            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+            item.setCheckState(Qt.Unchecked)
+            self.file_listWidget.addItem(item)
 
     def delete_file_event(self) -> None:
         """去掉文件"""
@@ -124,18 +155,10 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
     def path_click_event(self, item) -> None:
         """解析选中的文件，并搜索关键词"""
         try:
-            song_info, else_info = sm.read_song_metadata(item.text())
-            self.set_left_text(self.path_label, else_info.songPath)
-            self.set_left_text(self.filename_label, os.path.basename(item.text()))
-            self.set_left_text(self.original_song_name_label, song_info.songName)
-            self.set_left_text(self.original_singer_label, song_info.singer)
-            self.set_left_text(self.original_duration_label, song_info.duration)
+            song_info, else_info = read_song_metadata(item.text())
+            self.show_metadata(song_info, item.text())
             self.set_left_text(self.original_md5_label, else_info.md5)
-            if song_info.singer and song_info.songName:
-                # keyword = os.path.splitext(item.text())[0]
-                keyword = '-'.join([song_info.singer, song_info.songName])
-            else:
-                keyword = os.path.splitext(item.text())[0]
+            keyword = self.generate_search_keyword(item.text(), song_info)
             self.search_lineEdit.setText(keyword)
             self.file_listWidget.setEnabled(False)  # 搜索完成后解放
             self.search_tableWidget.setEnabled(False)
@@ -157,12 +180,12 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             #     self.warning_dialog.setParent(self)
             self.warning_dialog.show()
 
-    def write_metadata(self, item_row, song_info, song_id_or_md5, *, pic_path: str = None):
+    def _write_metadata_to_file(self, item_row, song_info, song_id_or_md5, *, pic_path: str = None):
         """结合ui数据写入元数据"""
         item = self.file_listWidget.item(item_row)
         file_path = item.text()
         try:
-            format_change = sm.write_song_metadata(file_path, song_info, pic_path=pic_path)
+            format_change = write_song_metadata(file_path, song_info, pic_path=pic_path)
 
             if format_change:
                 old_format, new_format = format_change
@@ -170,7 +193,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
                 item.setBackground(QColor(Qt.red))
             else:
                 item.setBackground(QColor(Qt.lightGray))
-            if self.is_download_lrc:
+            if self.is_lrc:
                 time.sleep(0.1)
                 self.download_lrc(song_id_or_md5, ' - '.join([song_info.singer, song_info.songName]))
             if self.is_rename:
@@ -210,7 +233,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         """手动修改数据"""
         if not self.file_listWidget.currentItem():
             return
-        song_info, _ = sm.read_song_metadata(self.file_listWidget.currentItem().text())
+        song_info, _ = read_song_metadata(self.file_listWidget.currentItem().text())
         self.modify_dialog.load_song_info(song_info)
         self.modify_dialog.show()
 
@@ -222,7 +245,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
     def _setting_done_event(self, setting: dialog.setting_dialog.Setting) -> None:
         """从设置对话框中获取数据载入"""
         self.api_mode = setting.api_mode
-        self.is_download_lrc = setting.is_lyric
+        self.is_lrc = setting.is_lrc
         self.is_rename = setting.is_rename
         if setting.auto_if:
             self.auto_complete_event()
@@ -265,7 +288,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
                 if self.stop_auto:
                     self.auto_dialog.prepare_close_signal.emit("")
                     break
-                song_info, else_info = sm.read_song_metadata(file_path)
+                song_info, else_info = read_song_metadata(file_path)
                 if song_info.singer and song_info.songName:
                     keyword = '-'.join([song_info.singer, song_info.songName])
                 else:
@@ -276,13 +299,14 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
                     search_data = []
                 if search_data:
                     res_info = search_info_func(search_data[0].idOrMd5)
-                    score = sm.compare_song_info(song_info, res_info)
+                    score = compare_song_info(song_info, res_info)
                     if score >= 80:
-                        self.write_metadata(row, res_info, search_data[0].idOrMd5)
+                        self._write_metadata_to_file(row, res_info, search_data[0].idOrMd5)
                     elif len(search_data) > 1:
                         res_info = search_info_func(search_data[1].idOrMd5)
+                        score = compare_song_info(song_info, res_info)
                         if score >= 80:
-                            self.write_metadata(row, res_info, search_data[1].idOrMd5)
+                            self._write_metadata_to_file(row, res_info, search_data[1].idOrMd5)
                     self.auto_dialog.add_signal.emit("")
                 else:
                     self.auto_dialog.add_signal.emit("")
@@ -327,8 +351,20 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             self.set_left_text(self.result_track_number_label, "N/A")
 
         if self.song_info.picBuffer.getvalue():
-            pix = Image.open(self.song_info.picBuffer).toqpixmap()
-            self.result_pic_label.setPixmap(pix)
+            try:
+                # 确保picBuffer是有效的
+                if self.song_info.picBuffer and self.song_info.picBuffer.getvalue():
+                    # 使用Pillow打开图片并转换为QPixmap
+                    q_img = QImage.fromData(self.song_info.picBuffer.getvalue())
+                    if q_img.isNull():
+                        raise ValueError("无法加载图片数据")
+                    pix = QPixmap.fromImage(q_img)
+                    self.result_pic_label.setPixmap(pix)
+                else:
+                    self.result_pic_label.setText("无图片")
+            except Exception as e:
+                self.result_pic_label.setText("图片加载失败")
+                print(f"图片加载失败: {e}")
         else:
             self.result_pic_label.setText("无图片")
 
@@ -425,7 +461,117 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
 
     def dropEvent(self, a0: QDropEvent) -> None:
         for q_url in a0.mimeData().urls():
-            self.file_listWidget.addItem(q_url.toLocalFile())
+            item = QListWidgetItem(q_url.toLocalFile())
+            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+            item.setCheckState(Qt.Unchecked)
+            self.file_listWidget.addItem(item)
+
+    def show_metadata(self, song_info: SongInfo, file_path: str = None):
+        """在UI上显示元数据信息"""
+        if file_path:
+            self.set_left_text(self.path_label, file_path)
+            self.set_left_text(self.filename_label, os.path.basename(file_path))
+
+        self.set_left_text(self.original_song_name_label, song_info.songName)
+        self.set_left_text(self.original_singer_label, song_info.singer)
+        self.set_left_text(self.original_duration_label, song_info.duration)
+        # MD5标签可能需要从其他地方获取，这里暂时留空或标记为N/A
+        self.set_left_text(self.original_md5_label, "N/A")
+
+    def generate_search_keyword(self, file_path: str, song_info: SongInfo) -> str:
+        """根据歌曲信息或文件名生成搜索关键词"""
+        if song_info.singer and song_info.songName:
+            return '-'.join([song_info.singer, song_info.songName])
+        else:
+            # 如果没有元数据，则从文件名中提取关键词
+            return os.path.splitext(os.path.basename(file_path))[0]
+
+    def batch_modify_metadata(self):
+        """批量自动匹配元数据并写入"""
+        checked_items = []
+        for i in range(self.file_listWidget.count()):
+            item = self.file_listWidget.item(i)
+            if item.checkState() == Qt.Checked:
+                checked_items.append(item)
+
+        if not checked_items:
+            QMessageBox.warning(self, "提示", "请先勾选需要处理的文件。")
+            return
+
+        # 启动后台线程执行批量处理
+        self._thread_batch_modify(checked_items)
+
+    def _batch_modify_done(self):
+        """批量修改完成后的回调函数"""
+        QMessageBox.information(self, "完成", "批量自动匹配已完成！")
+        # 刷新UI
+        if self.file_listWidget.currentItem():
+            self.path_click_event(self.file_listWidget.currentItem())
+        else:
+            # 如果没有当前项（比如列表为空或未选中），可以选择刷新第一个
+            if self.file_listWidget.count() > 0:
+                self.file_listWidget.setCurrentRow(0)
+                self.path_click_event(self.file_listWidget.item(0))
+
+
+    @thread_drive(_batch_modify_done)
+    def _thread_batch_modify(self, checked_items):
+        """在后台线程中执行批量元数据匹配和写入"""
+        try:
+            if self.api_mode == ApiMode.CLOUD:
+                search_func = self.cloud_api.search_data
+                info_func = self.cloud_api.get_song_info
+            elif self.api_mode == ApiMode.KUGOU:
+                search_func = self.kugou_api.search_hash
+                info_func = self.kugou_api.get_song_info
+            elif self.api_mode == ApiMode.SPOTIFY:
+                search_func = self.spotify_api.search_data
+                info_func = self.spotify_api.get_song_info
+            else:
+                raise ValueError("api_mode参数错误，未知的模式")
+
+            total = len(checked_items)
+            # TODO: 可以用一个进度条对话框来显示进度
+            # self.progress_dialog.show()
+            # self.progress_dialog.set_max(total)
+
+            for i, item in enumerate(checked_items):
+                file_path = item.text()
+                try:
+                    # 1. 生成关键词
+                    original_song_info, _ = read_song_metadata(file_path)
+                    keyword = self.generate_search_keyword(file_path, original_song_info)
+
+                    # 2. 执行搜索
+                    search_results = search_func(keyword)
+
+                    if not search_results:
+                        print(f"文件 '{os.path.basename(file_path)}' 未找到匹配结果。")
+                        continue
+
+                    # 3. 获取最佳匹配的详细信息
+                    best_match = search_results[0]
+                    new_song_info = info_func(best_match.idOrMd5)
+
+                    # 4. 写入文件
+                    row = self.file_listWidget.row(item)
+                    self._write_metadata_to_file(row, new_song_info, best_match.idOrMd5)
+                    # self.progress_dialog.add_signal.emit("")
+
+                except Exception as e:
+                    # 使用信号在主线程显示错误，避免线程安全问题
+                    self.warning_dialog_show_signal.emit(f"处理文件失败：{os.path.basename(file_path)}\n错误：{e}")
+                    continue
+        except Exception as e:
+            self.warning_dialog_show_signal.emit(f"批量处理时发生严重错误：\n{e}")
+
+    def on_item_changed(self, item):
+        """根据勾选的文件数量，设置批量修改按钮的可用状态"""
+        checked_count = 0
+        for i in range(self.file_listWidget.count()):
+            if self.file_listWidget.item(i).checkState() == Qt.Checked:
+                checked_count += 1
+        self.batch_modify_button.setEnabled(checked_count > 1)
 
 
 if __name__ == "__main__":

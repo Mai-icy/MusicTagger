@@ -6,6 +6,7 @@ import io
 import base64
 from typing import List, Dict
 import requests
+from PIL import Image
 from lyric_decode.lyric_decode import KrcFile
 from song_metadata.metadata_type import SongInfo, SongSearchInfo
 from api.api_error import NoneResultError
@@ -73,8 +74,18 @@ class KugouApi:
 
         pic_url = album_img.replace("/{size}/", "/")
         if pic_url:
-            pic_data = requests.get(pic_url, timeout=4).content
-            pic_buffer = io.BytesIO(pic_data)
+            pic_response = requests.get(pic_url, timeout=4)
+            pic_response.raise_for_status()
+            
+            with Image.open(io.BytesIO(pic_response.content)) as img:
+                if img.mode != 'RGB':
+                    img = img.convert('RGB')
+                
+                img.thumbnail((500, 500))
+                
+                pic_buffer = io.BytesIO()
+                img.save(pic_buffer, format='JPEG', quality=85)
+                pic_buffer.seek(0)
         else:
             pic_buffer = io.BytesIO()
 
