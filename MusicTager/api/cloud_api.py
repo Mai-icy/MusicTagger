@@ -50,6 +50,11 @@ class CloudMusicWebApi:
             img.save(pic_buffer, format='JPEG', quality=85)
             pic_buffer.seek(0)
 
+        lrc_file = self.get_lrc(song_id)
+        lyric = lrc_file.get_content('non')
+        if not lyric:
+            lyric = ""
+
         song_info = {
             "singer": ','.join(artists_list),
             "songName": song_json["name"],
@@ -58,7 +63,9 @@ class CloudMusicWebApi:
             "trackNumber": (song_json["no"], song_json["album"]["size"]),
             "duration": f'{duration // 60}:{duration % 60 // 10}{duration % 10}',
             "genre": None,
-            "picBuffer": pic_buffer}
+            "picBuffer": pic_buffer,
+            "lyric": lyric
+        }
         song_info = SongInfo(**song_info)
         return song_info
 

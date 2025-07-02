@@ -1343,7 +1343,7 @@
         "kind": 5,
         "importPath": "MusicTager.song_metadata.metadata_type",
         "description": "MusicTager.song_metadata.metadata_type",
-        "peekOfCode": "SongInfo = collections.namedtuple(\"SongInfo\",\n                                  [\"singer\",\n                                   \"songName\",\n                                   \"album\",\n                                   \"year\",\n                                   \"trackNumber\",\n                                   \"duration\",\n                                   \"genre\",\n                                   \"picBuffer\"])\nSongElseInfo = collections.namedtuple(",
+        "peekOfCode": "SongInfo = collections.namedtuple(\"SongInfo\",\n                                  [\"singer\",\n                                   \"songName\",\n                                   \"album\",\n                                   \"year\",\n                                   \"trackNumber\",\n                                   \"duration\",\n                                   \"genre\",\n                                   \"picBuffer\",\n                                   \"lyric\"])",
         "detail": "MusicTager.song_metadata.metadata_type",
         "documentation": {}
     },
