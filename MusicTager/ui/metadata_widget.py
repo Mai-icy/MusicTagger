@@ -38,8 +38,6 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
 
         self.threads = []  # 用于跟踪所有工作线程
 
-        self._init_ui_components()
-        self._init_layouts()
         self._init_dialogs()
         self._init_apis()
         
@@ -55,6 +53,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.search_data = []  # List[SongSearchInfo]
         self.song_info = None  # SongInfo
         self.stop_auto = False  # bool
+        self.metadata_cache = {}  # 缓存元数据
 
     def _load_stylesheet(self):
         """加载QSS样式表"""
@@ -65,59 +64,8 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         except FileNotFoundError:
             print(f"警告: 样式文件 'style.qss' 未找到。")
 
-    def _init_ui_components(self):
-        """初始化UI小部件"""
-        # 初始化所有在布局中需要的标签
-        self.path_label = QLabel("N/A")
-        self.filename_label = QLabel("N/A")
-        self.original_song_name_label = QLabel("N/A")
-        self.original_singer_label = QLabel("N/A")
-        self.original_album_label = QLabel("N/A")
-        self.original_year_label = QLabel("N/A")
-        self.original_genre_label = QLabel("N/A")
-        self.original_duration_label = QLabel("N/A")
-        self.original_lyric_label = QLabel("N/A")
-        self.original_md5_label = QLabel("N/A")
-
-        self.original_pic_label = QLabel()
-        self.original_pic_label.setMinimumSize(140, 140)
-        self.original_pic_label.setMaximumSize(140, 140)
-        self.original_pic_label.setObjectName("original_pic_label")
-        self.original_pic_label.setScaledContents(True)
-
-        self.result_song_name_label = QLabel("N/A")
-        self.result_singer_label = QLabel("N/A")
-        self.result_album_label = QLabel("N/A")
-
-    def _init_layouts(self):
-        """初始化布局"""
-        # 原始元数据布局
-        original_form_layout = QFormLayout(self.groupBox)
-        original_form_layout.setObjectName("original_form_layout")
-        original_form_layout.addRow("路径:", self.path_label)
-        original_form_layout.addRow("文件名:", self.filename_label)
-        original_form_layout.addRow("曲名:", self.original_song_name_label)
-        original_form_layout.addRow("歌手:", self.original_singer_label)
-        original_form_layout.addRow("专辑:", self.original_album_label)
-        original_form_layout.addRow("年份:", self.original_year_label)
-        original_form_layout.addRow("流派:", self.original_genre_label)
-        original_form_layout.addRow("时长:", self.original_duration_label)
-        original_form_layout.addRow("歌词:", self.original_lyric_label)
-        original_form_layout.addRow("MD5:", self.original_md5_label)
-        original_form_layout.addRow("封面:", self.original_pic_label)
-
-        # 搜索结果布局已在 setupUi 中大部分完成
-        # 这里仅作确认和微调
-        if not self.groupBox_2.layout():
-             # 如果groupBox_2没有布局，则创建一个新的
-            result_layout = QHBoxLayout(self.groupBox_2)
-            result_layout.addWidget(self.result_pic_label)
-            details_layout = QFormLayout()
-            details_layout.addRow("曲名:", self.result_song_name_label)
-            details_layout.addRow("歌手:", self.result_singer_label)
-            details_layout.addRow("专辑:", self.result_album_label)
-            # 添加其他需要的标签
-            result_layout.addLayout(details_layout)
+    # _init_ui_components and _init_layouts are no longer needed
+    # as setupUi handles all of this now.
 
     def _init_dialogs(self):
         """初始化对话框"""
@@ -249,22 +197,90 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             self.file_listWidget.removeItemWidget(self.file_listWidget.takeItem(row))
 
     def path_click_event(self, current_item: QListWidgetItem, previous_item: QListWidgetItem) -> None:
-        """解析选中的文件，并搜索关键词"""
+        """解析选中的文件，并搜索关键词。优先从缓存加载。"""
         if not current_item:
             return
-        try:
-            song_info, else_info = read_song_metadata(current_item.text())
-            self.show_metadata(song_info, current_item.text(), song_info.picBuffer)
-            self.set_left_text(self.original_md5_label, else_info.md5)
-            keyword = self.generate_search_keyword(current_item.text(), song_info)
-            self.search_lineEdit.setText(keyword)
-            self.file_listWidget.setEnabled(False)  # 搜索完成后解放
+        file_path = current_item.text()
+
+        if file_path in self.metadata_cache:
+            # 缓存命中
+            data = self.metadata_cache[file_path]
+            self._update_ui_with_data(data)
+        else:
+            # 缓存未命中，启动后台任务获取数据
+            self.file_listWidget.setEnabled(False)
             self.search_tableWidget.setEnabled(False)
-            self.search_event()
-        except Exception as e:
-            self.warning_dialog_show_signal.emit(repr(e))
-            current_item.setBackground(QColor(255, 100, 100, 100)) # 使用更柔和的红色
+            # 清理旧数据
+            self.search_tableWidget.clearContents()
+            self.search_tableWidget.setRowCount(0)
+            self.result_pic_label.setText("获取数据中...")
+            self._fetch_and_cache_data(file_path)
+
+    def _update_ui_with_data(self, data):
+        """使用提供的数据包更新整个UI"""
+        if not data:  # 处理错误情况
+            self.file_listWidget.setEnabled(True)
+            self.search_tableWidget.setEnabled(True)
             return
+
+        # 更新元数据和UI
+        self.show_metadata(data["original_song_info"], data["file_path"], data["original_song_info"].picBuffer)
+        self.set_left_text(self.original_md5_label, data["original_else_info"].md5)
+        
+        keyword = self.generate_search_keyword(data["file_path"], data["original_song_info"])
+        self.search_lineEdit.setText(keyword)
+
+        self.search_data = data.get("search_data", [])
+        self._load_search_data()
+
+        self.song_info = data.get("selected_song_info")
+        self._load_song_info()
+        
+        # 重新启用UI
+        self.file_listWidget.setEnabled(True)
+        self.search_tableWidget.setEnabled(True)
+
+    @thread_drive(_update_ui_with_data)
+    def _fetch_and_cache_data(self, file_path: str):
+        """在后台获取、处理并缓存文件数据"""
+        try:
+            song_info, else_info = read_song_metadata(file_path)
+            keyword = self.generate_search_keyword(file_path, song_info)
+
+            # 根据API模式选择函数
+            if self.api_mode == ApiMode.CLOUD:
+                search_func, info_func = self.cloud_api.search_data, self.cloud_api.get_song_info
+            elif self.api_mode == ApiMode.KUGOU:
+                search_func, info_func = self.kugou_api.search_hash, self.kugou_api.get_song_info
+            elif self.api_mode == ApiMode.SPOTIFY:
+                search_func, info_func = self.spotify_api.search_data, self.spotify_api.get_song_info
+            else:
+                raise ValueError("未知的API模式")
+
+            # 执行搜索
+            try:
+                search_results = search_func(keyword)
+            except api.NoneResultError:
+                search_results = []
+            
+            # 获取最佳匹配的详细信息
+            selected_song_info = None
+            if search_results:
+                selected_song_info = info_func(search_results[0].idOrMd5)
+
+            # 准备数据包并存入缓存
+            data = {
+                "file_path": file_path,
+                "original_song_info": song_info,
+                "original_else_info": else_info,
+                "search_data": search_results,
+                "selected_song_info": selected_song_info,
+            }
+            self.metadata_cache[file_path] = data
+            return data
+        except Exception as e:
+            self.warning_dialog_show_signal.emit(f"处理文件时出错 '{os.path.basename(file_path)}':\n{e}")
+            return None
 
     def show_warning_event(self, msg):
         """显示警告窗口"""
@@ -431,8 +447,8 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         else:
             self.result_pic_label.setText("无搜索结果")
             self.song_info = None
-        self.search_tableWidget.setEnabled(True)
-        self.file_listWidget.setEnabled(True)
+        # self.search_tableWidget.setEnabled(True)
+        # self.file_listWidget.setEnabled(True)
 
     def _load_song_info(self) -> None:
         """加载搜索结果的数据到ui"""
@@ -508,33 +524,37 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
 
     @thread_drive(_load_song_info)
     def result_click_event(self, current_item: QTableWidgetItem, previous_item: QTableWidgetItem) -> None:
-        """选中搜索结果中的项目，显示详细信息"""
-        if not current_item:
+        """选中搜索结果中的项目，显示详细信息，并更新缓存"""
+        if not current_item or not self.file_listWidget.currentItem():
             return
+        
+        current_file_path = self.file_listWidget.currentItem().text()
         self.search_tableWidget.setEnabled(False)
         self.result_pic_label.clear()
         self.result_pic_label.setText("获取数据中")
+        
         try:
             row = current_item.row()
+            song_id_or_md5 = self.search_tableWidget.item(row, 3).text()
+            
             if self.api_mode == ApiMode.CLOUD:
-                song_id = self.search_tableWidget.item(row, 3).text()
-                self.song_info = self.cloud_api.get_song_info(song_id)
+                self.song_info = self.cloud_api.get_song_info(song_id_or_md5)
             elif self.api_mode == ApiMode.KUGOU:
-                md5 = self.search_tableWidget.item(row, 3).text()
-                self.song_info = self.kugou_api.get_song_info(md5)
+                self.song_info = self.kugou_api.get_song_info(song_id_or_md5)
             elif self.api_mode == ApiMode.SPOTIFY:
-                song_id = self.search_tableWidget.item(row, 3).text()
-                self.song_info = self.spotify_api.get_song_info(song_id)
+                self.song_info = self.spotify_api.get_song_info(song_id_or_md5)
             else:
                 raise ValueError("api_mode参数错误，未知的模式")
-        except api.NoneResultError:
-            self.search_data = []
+            
+            # 成功获取后，更新缓存
+            if current_file_path in self.metadata_cache:
+                self.metadata_cache[current_file_path]["selected_song_info"] = self.song_info
+                
         except Exception as e:
             self.warning_dialog_show_signal.emit(repr(e))
-            self.search_data = []
-            return
-        self.search_tableWidget.setEnabled(True)
-        self.file_listWidget.setEnabled(True)
+            self.song_info = None # Clear song info on error
+        finally:
+            self.search_tableWidget.setEnabled(True)
 
     def set_left_text(self, label: QLabel, text: str) -> None:
         """根据文本内容设置标签样式和文本，并处理长文本的显示。"""

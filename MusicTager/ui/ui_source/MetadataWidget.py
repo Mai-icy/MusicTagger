@@ -14,103 +14,115 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MetadataWidget(object):
     def setupUi(self, MetadataWidget):
         MetadataWidget.setObjectName("MetadataWidget")
-        MetadataWidget.resize(820, 600)
+        MetadataWidget.resize(850, 650)
 
-        # Main horizontal layout
         main_layout = QtWidgets.QHBoxLayout(MetadataWidget)
         main_layout.setContentsMargins(10, 10, 10, 10)
         main_layout.setSpacing(10)
-        main_layout.setObjectName("main_layout")
 
-        # Left panel (File list)
-        left_panel_layout = QtWidgets.QVBoxLayout()
-        left_panel_layout.setSpacing(5)
-        self.add_file_button = QtWidgets.QPushButton("添加文件")
-        self.delete_file_button = QtWidgets.QPushButton("去除文件")
-        self.select_all_checkbox = QtWidgets.QCheckBox("全选") # Moved here
-        
-        file_button_layout = QtWidgets.QHBoxLayout()
-        file_button_layout.addWidget(self.add_file_button)
-        file_button_layout.addWidget(self.delete_file_button)
-        left_panel_layout.addLayout(file_button_layout)
-        left_panel_layout.addWidget(self.select_all_checkbox) # Moved here
-
+        # Left Panel
+        left_panel = QtWidgets.QVBoxLayout()
+        left_panel.setSpacing(5)
         self.file_listWidget = QtWidgets.QListWidget()
-        self.file_listWidget.setFixedWidth(220)
-        left_panel_layout.addWidget(self.file_listWidget)
-        main_layout.addLayout(left_panel_layout)
+        self.file_listWidget.setFixedWidth(250)
+        file_buttons = QtWidgets.QHBoxLayout()
+        self.add_file_button = QtWidgets.QPushButton("添加")
+        self.delete_file_button = QtWidgets.QPushButton("移除")
+        file_buttons.addWidget(self.add_file_button)
+        file_buttons.addWidget(self.delete_file_button)
+        self.select_all_checkbox = QtWidgets.QCheckBox("全选")
+        left_panel.addLayout(file_buttons)
+        left_panel.addWidget(self.select_all_checkbox)
+        left_panel.addWidget(self.file_listWidget)
+        main_layout.addLayout(left_panel)
 
-        # Center panel (Metadata info and control buttons)
-        center_panel_layout = QtWidgets.QVBoxLayout()
+        # Center Panel
+        center_panel = QtWidgets.QVBoxLayout()
+        self.groupBox = QtWidgets.QGroupBox("文件信息")
+        original_layout = QtWidgets.QFormLayout(self.groupBox)
+        self.path_label = QtWidgets.QLabel("N/A")
+        self.filename_label = QtWidgets.QLabel("N/A")
+        self.original_song_name_label = QtWidgets.QLabel("N/A")
+        self.original_singer_label = QtWidgets.QLabel("N/A")
+        self.original_album_label = QtWidgets.QLabel("N/A")
+        self.original_year_label = QtWidgets.QLabel("N/A")
+        self.original_genre_label = QtWidgets.QLabel("N/A")
+        self.original_duration_label = QtWidgets.QLabel("N/A")
+        self.original_lyric_label = QtWidgets.QLabel("N/A")
+        self.original_md5_label = QtWidgets.QLabel("N/A")
+        self.original_pic_label = QtWidgets.QLabel()
+        self.original_pic_label.setFixedSize(140, 140)
+        self.original_pic_label.setScaledContents(True)
+        original_layout.addRow("路径:", self.path_label)
+        original_layout.addRow("文件名:", self.filename_label)
+        original_layout.addRow("曲名:", self.original_song_name_label)
+        original_layout.addRow("歌手:", self.original_singer_label)
+        original_layout.addRow("专辑:", self.original_album_label)
+        original_layout.addRow("年份:", self.original_year_label)
+        original_layout.addRow("流派:", self.original_genre_label)
+        original_layout.addRow("时长:", self.original_duration_label)
+        original_layout.addRow("歌词:", self.original_lyric_label)
+        original_layout.addRow("MD5:", self.original_md5_label)
+        original_layout.addRow("封面:", self.original_pic_label)
+        center_panel.addWidget(self.groupBox)
         
-        # Original metadata group
-        self.groupBox = QtWidgets.QGroupBox("文件原信息")
-        self.groupBox.setObjectName("groupBox")
-        center_panel_layout.addWidget(self.groupBox)
-        
-        # Control buttons layout
-        control_buttons_layout = QtWidgets.QGridLayout()
+        control_buttons = QtWidgets.QGridLayout()
         self.modify_button = QtWidgets.QPushButton("手动修改")
         self.pass_button = QtWidgets.QPushButton("跳过")
         self.batch_modify_button = QtWidgets.QPushButton("批量修改")
         self.setting_button = QtWidgets.QPushButton("设置")
         self.confirm_buton = QtWidgets.QPushButton("导入元数据")
         self.confirm_buton.setObjectName("confirm_buton")
+        control_buttons.addWidget(self.modify_button, 0, 0)
+        control_buttons.addWidget(self.pass_button, 0, 1)
+        control_buttons.addWidget(self.batch_modify_button, 1, 0)
+        control_buttons.addWidget(self.setting_button, 1, 1)
+        control_buttons.addWidget(self.confirm_buton, 2, 0, 1, 2)
+        center_panel.addLayout(control_buttons)
+        main_layout.addLayout(center_panel)
 
-        control_buttons_layout.addWidget(self.modify_button, 0, 0)
-        control_buttons_layout.addWidget(self.pass_button, 0, 1)
-        control_buttons_layout.addWidget(self.batch_modify_button, 1, 0)
-        control_buttons_layout.addWidget(self.setting_button, 1, 1)
-        control_buttons_layout.addWidget(self.confirm_buton, 2, 0, 1, 2) # Span across 2 columns
-        center_panel_layout.addLayout(control_buttons_layout)
-        
-        main_layout.addLayout(center_panel_layout)
-
-        # Right panel (Search results)
-        right_panel_layout = QtWidgets.QVBoxLayout()
-        
+        # Right Panel
+        right_panel = QtWidgets.QVBoxLayout()
         search_layout = QtWidgets.QHBoxLayout()
         self.search_lineEdit = QtWidgets.QLineEdit()
-        self.search_lineEdit.setPlaceholderText("搜索音乐...")
+        self.search_lineEdit.setPlaceholderText("搜索...")
         self.search_button = QtWidgets.QPushButton("搜索")
         search_layout.addWidget(self.search_lineEdit)
         search_layout.addWidget(self.search_button)
-        right_panel_layout.addLayout(search_layout)
-
+        right_panel.addLayout(search_layout)
         self.search_tableWidget = QtWidgets.QTableWidget()
-        right_panel_layout.addWidget(self.search_tableWidget)
+        right_panel.addWidget(self.search_tableWidget)
         
-        # Search result metadata group
         self.groupBox_2 = QtWidgets.QGroupBox("搜索结果")
-        self.groupBox_2.setObjectName("groupBox_2")
+        result_main_layout = QtWidgets.QHBoxLayout(self.groupBox_2)
         self.result_pic_label = QtWidgets.QLabel()
         self.result_pic_label.setFixedSize(140, 140)
-        self.result_pic_label.setObjectName("result_pic_label")
-        
-        result_details_layout = QtWidgets.QVBoxLayout() # A new layout for text labels
+        self.result_pic_label.setScaledContents(True)
+        result_main_layout.addWidget(self.result_pic_label)
+        result_form_layout = QtWidgets.QFormLayout()
         self.result_song_name_label = QtWidgets.QLabel("N/A")
         self.result_singer_label = QtWidgets.QLabel("N/A")
         self.result_album_label = QtWidgets.QLabel("N/A")
+        self.result_year_label = QtWidgets.QLabel("N/A")
+        self.result_genre_label = QtWidgets.QLabel("N/A")
+        self.result_duration_label = QtWidgets.QLabel("N/A")
+        self.result_track_number_label = QtWidgets.QLabel("N/A")
+        result_form_layout.addRow("曲名:", self.result_song_name_label)
+        result_form_layout.addRow("歌手:", self.result_singer_label)
+        result_form_layout.addRow("专辑:", self.result_album_label)
+        result_form_layout.addRow("年份:", self.result_year_label)
+        result_form_layout.addRow("流派:", self.result_genre_label)
+        result_form_layout.addRow("时长:", self.result_duration_label)
+        result_form_layout.addRow("音轨:", self.result_track_number_label)
+        result_main_layout.addLayout(result_form_layout)
+        right_panel.addWidget(self.groupBox_2)
         
-        result_details_layout.addWidget(self.result_song_name_label)
-        result_details_layout.addWidget(self.result_singer_label)
-        result_details_layout.addWidget(self.result_album_label)
-        
-        group2_layout = QtWidgets.QHBoxLayout(self.groupBox_2)
-        group2_layout.addWidget(self.result_pic_label)
-        group2_layout.addLayout(result_details_layout) # Add the new layout
-        
-        right_panel_layout.addWidget(self.groupBox_2)
-        
-        main_layout.addLayout(right_panel_layout)
-
-        main_layout.setStretch(2, 1) # Give more space to the right panel
+        main_layout.addLayout(right_panel)
+        main_layout.setStretch(2, 1)
 
         self.retranslateUi(MetadataWidget)
         QtCore.QMetaObject.connectSlotsByName(MetadataWidget)
 
     def retranslateUi(self, MetadataWidget):
         _translate = QtCore.QCoreApplication.translate
-        MetadataWidget.setWindowTitle(_translate("MetadataWidget", "Music Tagger"))
-        # The rest of the retranslate calls are no longer needed
-        # as the QGroupBox titles and QPushButton text are set directly.
+        MetadataWidget.setWindowTitle(_translate("MetadataWidget", "音乐标签编辑器"))

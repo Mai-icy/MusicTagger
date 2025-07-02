@@ -2,16 +2,16 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+.gitignore
 # C extensions
 *.so
 
 # Distribution / packaging
-.Python
+.Python/
+.vscode/
+download/
 build/
-develop-eggs/
 dist/
-downloads/
 eggs/
 .eggs/
 lib/

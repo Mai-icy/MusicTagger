@@ -17,7 +17,7 @@ def thread_drive(done_emit_func):
 
             if done_emit_func:
                 res_func = MethodType(done_emit_func, self)
-                work_thread.finished.connect(res_func)
+                work_thread.done_signal.connect(res_func)
             work_thread.start()
         return wrapper
     return outer
@@ -36,12 +36,15 @@ class WorkThread(QThread):
         raise NotImplementedError("The 'work' function has not been set")
 
     def run(self):
+        res = None
         try:
             self.__class__._running_num += 1
-            self.work()
+            res = self.work()
+        except Exception as e:
+            print(f"Error in WorkThread: {e}")
         finally:
             self.__class__._running_num -= 1
-            self.done_signal.emit('')
+            self.done_signal.emit(res)
 
         if self.__class__._running_num == 0:
             self.thread_all_done_signal.emit('')
