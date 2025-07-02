@@ -10,11 +10,15 @@ def thread_drive(done_emit_func):
     def outer(func):
         @wraps(func)
         def wrapper(self, *args, **kwargs):
-            self.work_thread = WorkThread(func, self, *args, **kwargs)
+            work_thread = WorkThread(func, self, *args, **kwargs)
+            if hasattr(self, 'threads') and isinstance(self.threads, list):
+                self.threads.append(work_thread)
+                work_thread.finished.connect(lambda: self.threads.remove(work_thread))
+
             if done_emit_func:
                 res_func = MethodType(done_emit_func, self)
-                self.work_thread.finished.connect(res_func)
-            self.work_thread.start()
+                work_thread.finished.connect(res_func)
+            work_thread.start()
         return wrapper
     return outer
 

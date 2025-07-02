@@ -29,15 +29,19 @@ LRC_PATH = "download\\"
 class MetadataWidget(QWidget, Ui_MetadataWidget):
     warning_dialog_show_signal = pyqtSignal(str)
     auto_dialog_show_signal = pyqtSignal(str)
+    progress_update_signal = pyqtSignal(int)
 
     def __init__(self, parent=None):
         super(MetadataWidget, self).__init__(parent)
         self.setupUi(self)
 
+        self.threads = []  # 用于跟踪所有工作线程
+
         # 动态创建缺失的LabeL
         self.original_album_label = QLabel("N/A")
         self.original_year_label = QLabel("N/A")
         self.original_genre_label = QLabel("N/A")
+        self.original_lyric_label = QLabel("N/A")
         self.original_pic_label = QLabel()
         self.original_pic_label.setMinimumSize(140, 140)
         self.original_pic_label.setMaximumSize(140, 140)
@@ -52,6 +56,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         new_labels_layout.addWidget(self.create_metadata_layout("专栏", self.original_album_label))
         new_labels_layout.addWidget(self.create_metadata_layout("年份", self.original_year_label))
         new_labels_layout.addWidget(self.create_metadata_layout("流派", self.original_genre_label))
+        new_labels_layout.addWidget(self.create_metadata_layout("歌词", self.original_lyric_label))
         new_labels_layout.addWidget(self.create_metadata_layout("封面", self.original_pic_label))
         
         # 将新布局插入到现有的 verticalLayout_12 中
@@ -64,6 +69,9 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         setting_button_index = button_layout.indexOf(self.setting_button)
         button_layout.insertWidget(setting_button_index, self.batch_modify_button)
 
+        self.select_all_checkbox = QCheckBox("全选")
+        self.horizontalLayout_2.addWidget(self.select_all_checkbox)
+
         self.modify_dialog = dialog.ModifyDialog(self)
         self.setting_dialog = dialog.SettingDialog(self)
         self.warning_dialog = dialog.WarningDialog(self)
@@ -71,6 +79,11 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.cloud_api = api.CloudMusicWebApi()
         self.kugou_api = api.KugouApi()
         self.spotify_api = api.SpotifyApi()
+
+        self.progress_dialog = QProgressDialog("正在批量处理...", "取消", 0, 100, self)
+        self.progress_dialog.setWindowModality(Qt.WindowModal)
+        self.progress_dialog.setAutoClose(True)
+        self.progress_dialog.reset()
 
         self._init_signal()
         self._init_table_widgets()
@@ -90,15 +103,35 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
 
     def _load_config(self):
         """加载用户设置"""
+        config_path = os.path.join(os.path.dirname(__file__), '..', '..', 'config.json')
         try:
-            config_path = os.path.join(os.path.dirname(__file__), '..', '..', 'config.json')
+            if not os.path.exists(config_path):
+                raise FileNotFoundError
             with open(config_path, "r", encoding="utf-8") as f:
                 config = json.load(f)
             self.api_mode = ApiMode(config.get("api_mode", 0))
             self.is_rename = config.get("is_rename", False)
             self.is_lrc = config.get("is_lrc", False)
         except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"配置文件加载失败: {e}")
+            print(f"配置文件加载或解析失败: {e}，将创建默认配置文件。")
+            self._create_default_config(config_path)
+
+    def _create_default_config(self, path: str):
+        """创建默认配置文件"""
+        default_config = {
+            "api_mode": 0,
+            "is_rename": False,
+            "is_lrc": False
+        }
+        try:
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(default_config, f, indent=4)
+            # 应用默认设置
+            self.api_mode = ApiMode(default_config["api_mode"])
+            self.is_rename = default_config["is_rename"]
+            self.is_lrc = default_config["is_lrc"]
+        except IOError as e:
+            print(f"无法创建默认配置文件: {e}")
 
     def _init_signal(self):
         """初始化信号"""
@@ -112,13 +145,15 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
 
         self.batch_modify_button.clicked.connect(self.batch_modify_metadata)
         self.file_listWidget.itemChanged.connect(self.on_item_changed)
-        self.file_listWidget.itemClicked.connect(self.path_click_event)
-        self.search_tableWidget.itemClicked.connect(self.result_click_event)
+        self.select_all_checkbox.stateChanged.connect(self.toggle_select_all)
+        self.file_listWidget.currentItemChanged.connect(self.path_click_event)
+        self.search_tableWidget.currentItemChanged.connect(self.result_click_event)
 
         self.modify_dialog.done_signal.connect(self.modify_done_event)
         self.setting_dialog.done_signal.connect(self._setting_done_event)
         self.auto_dialog_show_signal.connect(self.auto_dialog.show)
         self.warning_dialog_show_signal.connect(self.show_warning_event)
+        self.progress_update_signal.connect(self.update_progress_dialog)
 
     def _init_table_widgets(self):
         """设置表格属性"""
@@ -174,20 +209,22 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             row = self.file_listWidget.selectedIndexes()[0].row()
             self.file_listWidget.removeItemWidget(self.file_listWidget.takeItem(row))
 
-    def path_click_event(self, item) -> None:
+    def path_click_event(self, current_item: QListWidgetItem, previous_item: QListWidgetItem) -> None:
         """解析选中的文件，并搜索关键词"""
+        if not current_item:
+            return
         try:
-            song_info, else_info = read_song_metadata(item.text())
-            self.show_metadata(song_info, item.text(), song_info.picBuffer)
+            song_info, else_info = read_song_metadata(current_item.text())
+            self.show_metadata(song_info, current_item.text(), song_info.picBuffer)
             self.set_left_text(self.original_md5_label, else_info.md5)
-            keyword = self.generate_search_keyword(item.text(), song_info)
+            keyword = self.generate_search_keyword(current_item.text(), song_info)
             self.search_lineEdit.setText(keyword)
             self.file_listWidget.setEnabled(False)  # 搜索完成后解放
             self.search_tableWidget.setEnabled(False)
             self.search_event()
         except Exception as e:
             self.warning_dialog_show_signal.emit(repr(e))
-            item.setBackground(QColor(Qt.red))
+            current_item.setBackground(QColor(Qt.red))
             return
 
     def show_warning_event(self, msg):
@@ -242,8 +279,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             self._write_metadata_to_file(row, self.song_info, song_id_or_md5, pic_path=pic_path)
             self.song_info = None
             self.file_listWidget.setCurrentRow(self.file_listWidget.currentRow() + 1)
-            if self.file_listWidget.selectedItems():
-                self.path_click_event(self.file_listWidget.selectedItems()[0])
+            # The path_click_event is automatically triggered by the currentItemChanged signal from setCurrentRow
 
     def pass_event(self) -> None:
         """跳过当前选择并选择下一个"""
@@ -251,8 +287,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             return
         self.song_info = None
         self.file_listWidget.setCurrentRow(self.file_listWidget.currentRow() + 1)
-        if self.file_listWidget.selectedItems():
-            self.path_click_event(self.file_listWidget.selectedItems()[0])
+        # The path_click_event is automatically triggered by the currentItemChanged signal from setCurrentRow
 
     def modify_event(self) -> None:
         """手动修改数据"""
@@ -275,6 +310,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         if setting.auto_if:
             self.auto_complete_event()
 
+    @thread_drive(None)
     def auto_complete_event(self) -> None:
         """开启自动匹配元数据写入"""
         if not self.file_listWidget:
@@ -284,8 +320,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         elif not self.file_listWidget.selectedIndexes():
             self.file_listWidget.setCurrentRow(0)
 
-        t = threading.Thread(target=self._thread_auto_complete)
-        t.start()
+        self._thread_auto_complete()
 
     def _thread_auto_complete(self):
         """自动补全元数据"""
@@ -353,12 +388,12 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
                 self.search_tableWidget.setItem(outer_index, inner_index, item)
         if self.search_data:  # 自动选中当前第一个
             self.search_tableWidget.selectRow(0)
-            self.result_click_event(self.search_tableWidget.item(0, 1))
+            # The result_click_event is automatically triggered by the currentItemChanged signal from selectRow
         else:
             self.result_pic_label.setText("无搜索结果")
             self.song_info = None
-            self.search_tableWidget.setEnabled(True)
-            self.file_listWidget.setEnabled(True)
+        self.search_tableWidget.setEnabled(True)
+        self.file_listWidget.setEnabled(True)
 
     def _load_song_info(self) -> None:
         """加载搜索结果的数据到ui"""
@@ -433,20 +468,23 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
                 return
 
     @thread_drive(_load_song_info)
-    def result_click_event(self, item) -> None:
+    def result_click_event(self, current_item: QTableWidgetItem, previous_item: QTableWidgetItem) -> None:
         """选中搜索结果中的项目，显示详细信息"""
+        if not current_item:
+            return
         self.search_tableWidget.setEnabled(False)
         self.result_pic_label.clear()
         self.result_pic_label.setText("获取数据中")
         try:
+            row = current_item.row()
             if self.api_mode == ApiMode.CLOUD:
-                song_id = self.search_tableWidget.item(item.row(), 3).text()
+                song_id = self.search_tableWidget.item(row, 3).text()
                 self.song_info = self.cloud_api.get_song_info(song_id)
             elif self.api_mode == ApiMode.KUGOU:
-                md5 = self.search_tableWidget.item(item.row(), 3).text()
+                md5 = self.search_tableWidget.item(row, 3).text()
                 self.song_info = self.kugou_api.get_song_info(md5)
             elif self.api_mode == ApiMode.SPOTIFY:
-                song_id = self.search_tableWidget.item(item.row(), 3).text()
+                song_id = self.search_tableWidget.item(row, 3).text()
                 self.song_info = self.spotify_api.get_song_info(song_id)
             else:
                 raise ValueError("api_mode参数错误，未知的模式")
@@ -514,6 +552,14 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.set_left_text(self.original_genre_label, song_info.genre)
         self.set_left_text(self.original_duration_label, song_info.duration)
 
+        # 检查歌词
+        if song_info.lyric and song_info.lyric.strip():
+            self.original_lyric_label.setText("有")
+            self.original_lyric_label.setStyleSheet("")
+        else:
+            self.original_lyric_label.setText("无")
+            self.original_lyric_label.setStyleSheet("color: red;")
+
         # 单独处理MD5，因为它来自else_info
         # 注意：在调用此函数时，需要确保else_info是可用的，或者在这里处理它
         # self.set_left_text(self.original_md5_label, "N/A") # 暂时保持
@@ -562,21 +608,26 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         if not checked_items:
             QMessageBox.warning(self, "提示", "请先勾选需要处理的文件。")
             return
+        
+        self.progress_dialog.setMaximum(len(checked_items))
+        self.progress_dialog.setValue(0)
+        self.progress_dialog.show()
 
         # 启动后台线程执行批量处理
         self._thread_batch_modify(checked_items)
 
     def _batch_modify_done(self):
         """批量修改完成后的回调函数"""
+        self.progress_dialog.reset()
         QMessageBox.information(self, "完成", "批量自动匹配已完成！")
         # 刷新UI
         if self.file_listWidget.currentItem():
-            self.path_click_event(self.file_listWidget.currentItem())
+            # Force a refresh of the current item by directly calling the event handler
+            self.path_click_event(self.file_listWidget.currentItem(), None)
         else:
-            # 如果没有当前项（比如列表为空或未选中），可以选择刷新第一个
+            # If no item is current, select the first one, which will trigger the refresh
             if self.file_listWidget.count() > 0:
                 self.file_listWidget.setCurrentRow(0)
-                self.path_click_event(self.file_listWidget.item(0))
 
 
     @thread_drive(_batch_modify_done)
@@ -595,12 +646,9 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             else:
                 raise ValueError("api_mode参数错误，未知的模式")
 
-            total = len(checked_items)
-            # TODO: 可以用一个进度条对话框来显示进度
-            # self.progress_dialog.show()
-            # self.progress_dialog.set_max(total)
-
             for i, item in enumerate(checked_items):
+                if self.progress_dialog.wasCanceled():
+                    break
                 file_path = item.text()
                 try:
                     # 1. 生成关键词
@@ -621,12 +669,12 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
                     # 4. 写入文件
                     row = self.file_listWidget.row(item)
                     self._write_metadata_to_file(row, new_song_info, best_match.idOrMd5)
-                    # self.progress_dialog.add_signal.emit("")
-
+                
                 except Exception as e:
                     # 使用信号在主线程显示错误，避免线程安全问题
                     self.warning_dialog_show_signal.emit(f"处理文件失败：{os.path.basename(file_path)}\n错误：{e}")
-                    continue
+                finally:
+                    self.progress_update_signal.emit(i + 1)
         except Exception as e:
             self.warning_dialog_show_signal.emit(f"批量处理时发生严重错误：\n{e}")
 
@@ -637,6 +685,28 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             if self.file_listWidget.item(i).checkState() == Qt.Checked:
                 checked_count += 1
         self.batch_modify_button.setEnabled(checked_count > 1)
+
+    def update_progress_dialog(self, value):
+        self.progress_dialog.setValue(value)
+
+    def toggle_select_all(self, state):
+        """(取消)全选 all items in the file list."""
+        check_state = Qt.Checked if state == Qt.Checked else Qt.Unchecked
+        self.file_listWidget.itemChanged.disconnect(self.on_item_changed)
+        for i in range(self.file_listWidget.count()):
+            self.file_listWidget.item(i).setCheckState(check_state)
+        self.file_listWidget.itemChanged.connect(self.on_item_changed)
+        if self.file_listWidget.count() > 0:
+            self.on_item_changed(self.file_listWidget.item(0))
+
+    def closeEvent(self, event):
+        """重写关闭事件，确保所有线程都已结束"""
+        running_threads = [t for t in self.threads if t.isRunning()]
+        if running_threads:
+            QMessageBox.warning(self, "请稍后", "正在进行后台任务，请等待完成后再关闭窗口。")
+            event.ignore()
+        else:
+            event.accept()
 
 
 if __name__ == "__main__":

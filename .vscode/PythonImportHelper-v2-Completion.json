@@ -1298,7 +1298,7 @@
         "kind": 2,
         "importPath": "MusicTager.components.work_thread",
         "description": "MusicTager.components.work_thread",
-        "peekOfCode": "def thread_drive(done_emit_func):\n    \"\"\"修饰线程驱动的类成员函数（槽函数必须依附于设置槽函数的线程）\"\"\"\n    def outer(func):\n        @wraps(func)\n        def wrapper(self, *args, **kwargs):\n            self.work_thread = WorkThread(func, self, *args, **kwargs)\n            if done_emit_func:\n                res_func = MethodType(done_emit_func, self)\n                self.work_thread.finished.connect(res_func)\n            self.work_thread.start()",
+        "peekOfCode": "def thread_drive(done_emit_func):\n    \"\"\"修饰线程驱动的类成员函数（槽函数必须依附于设置槽函数的线程）\"\"\"\n    def outer(func):\n        @wraps(func)\n        def wrapper(self, *args, **kwargs):\n            work_thread = WorkThread(func, self, *args, **kwargs)\n            if hasattr(self, 'threads') and isinstance(self.threads, list):\n                self.threads.append(work_thread)\n                work_thread.finished.connect(lambda: self.threads.remove(work_thread))\n            if done_emit_func:",
         "detail": "MusicTager.components.work_thread",
         "documentation": {}
     },
@@ -1478,7 +1478,7 @@
         "kind": 6,
         "importPath": "MusicTager.ui.metadata_widget",
         "description": "MusicTager.ui.metadata_widget",
-        "peekOfCode": "class MetadataWidget(QWidget, Ui_MetadataWidget):\n    warning_dialog_show_signal = pyqtSignal(str)\n    auto_dialog_show_signal = pyqtSignal(str)\n    def __init__(self, parent=None):\n        super(MetadataWidget, self).__init__(parent)\n        self.setupUi(self)\n        # 动态创建缺失的LabeL\n        self.original_album_label = QLabel(\"N/A\")\n        self.original_year_label = QLabel(\"N/A\")\n        self.original_genre_label = QLabel(\"N/A\")",
+        "peekOfCode": "class MetadataWidget(QWidget, Ui_MetadataWidget):\n    warning_dialog_show_signal = pyqtSignal(str)\n    auto_dialog_show_signal = pyqtSignal(str)\n    progress_update_signal = pyqtSignal(int)\n    def __init__(self, parent=None):\n        super(MetadataWidget, self).__init__(parent)\n        self.setupUi(self)\n        self.threads = []  # 用于跟踪所有工作线程\n        # 动态创建缺失的LabeL\n        self.original_album_label = QLabel(\"N/A\")",
         "detail": "MusicTager.ui.metadata_widget",
         "documentation": {}
     },
@@ -1487,7 +1487,7 @@
         "kind": 5,
         "importPath": "MusicTager.ui.metadata_widget",
         "description": "MusicTager.ui.metadata_widget",
-        "peekOfCode": "LRC_PATH = \"download\\\\\"\nclass MetadataWidget(QWidget, Ui_MetadataWidget):\n    warning_dialog_show_signal = pyqtSignal(str)\n    auto_dialog_show_signal = pyqtSignal(str)\n    def __init__(self, parent=None):\n        super(MetadataWidget, self).__init__(parent)\n        self.setupUi(self)\n        # 动态创建缺失的LabeL\n        self.original_album_label = QLabel(\"N/A\")\n        self.original_year_label = QLabel(\"N/A\")",
+        "peekOfCode": "LRC_PATH = \"download\\\\\"\nclass MetadataWidget(QWidget, Ui_MetadataWidget):\n    warning_dialog_show_signal = pyqtSignal(str)\n    auto_dialog_show_signal = pyqtSignal(str)\n    progress_update_signal = pyqtSignal(int)\n    def __init__(self, parent=None):\n        super(MetadataWidget, self).__init__(parent)\n        self.setupUi(self)\n        self.threads = []  # 用于跟踪所有工作线程\n        # 动态创建缺失的LabeL",
         "detail": "MusicTager.ui.metadata_widget",
         "documentation": {}
     }
