@@ -1388,7 +1388,7 @@
         "kind": 2,
         "importPath": "MusicTager.song_metadata.read_metadata",
         "description": "MusicTager.song_metadata.read_metadata",
-        "peekOfCode": "def read_song_metadata(path: str) -> (SongInfo, SongElseInfo):\n    \"\"\"获取文件的元数据\"\"\"\n    tag = TinyTag.get(path)\n    suffix = os.path.splitext(path)[-1]\n    file_name = os.path.splitext(os.path.basename(path))[0]\n    create_time = time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime(os.path.getctime(path)))\n    modified_time = time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime(os.path.getmtime(path)))\n    duration = tag.duration\n    if path.endswith(\"m4a\") or path.endswith(\"mp4\"):\n        media = MediaInfo.parse(\"..//DECO27 - パラサイト feat. 初音ミク.mp4\")",
+        "peekOfCode": "def read_song_metadata(path: str) -> (SongInfo, SongElseInfo):\n    \"\"\"获取文件的元数据\"\"\"\n    audio = mutagen.File(path)\n    tag = TinyTag.get(path)\n    suffix = os.path.splitext(path)[-1]\n    file_name = os.path.splitext(os.path.basename(path))[0]\n    create_time = time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime(os.path.getctime(path)))\n    modified_time = time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime(os.path.getmtime(path)))\n    duration = tag.duration\n    if path.endswith(\"m4a\") or path.endswith(\"mp4\"):",
         "detail": "MusicTager.song_metadata.read_metadata",
         "documentation": {}
     },

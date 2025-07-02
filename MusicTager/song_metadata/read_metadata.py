@@ -51,6 +51,7 @@ def get_album_buffer(path: str) -> io.BytesIO:
 
 def read_song_metadata(path: str) -> (SongInfo, SongElseInfo):
     """获取文件的元数据"""
+    audio = mutagen.File(path)
     tag = TinyTag.get(path)
     suffix = os.path.splitext(path)[-1]
     file_name = os.path.splitext(os.path.basename(path))[0]
@@ -62,6 +63,13 @@ def read_song_metadata(path: str) -> (SongInfo, SongElseInfo):
         duration = round(media.tracks[0].duration / 1000)
 
     pic_buffer = get_album_buffer(path)
+    lyric = ""
+    if suffix == '.mp3' and audio.tags:
+        uslt_tag = audio.tags.getall('USLT::XXX')
+        if uslt_tag:
+            lyric = uslt_tag[0].text
+    elif suffix == '.flac' and 'LYRICS' in audio:
+        lyric = audio['LYRICS'][0]
 
     text_duration = '%d:%d%d' % (duration // 60, duration % 60 // 10, duration % 10)
     song_info_dict = {
@@ -72,7 +80,8 @@ def read_song_metadata(path: str) -> (SongInfo, SongElseInfo):
         "year": tag.year,
         "trackNumber": tag.track,
         "picBuffer": pic_buffer,
-        "duration": text_duration
+        "duration": text_duration,
+        "lyric": lyric
     }
     else_info = {
         "songPath": path,
