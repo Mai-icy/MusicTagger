@@ -56,13 +56,13 @@ class ModifyDialog(QDialog, Ui_ModifyDialog):
         if song_info.album:
             self.album_lineEdit.setText(song_info.album)
         if song_info.genre:
-            self.genre_lineEdit.setText(song_info.genre)
+            self.genre_lineEdit.setText(str(song_info.genre))
         if song_info.singer:
             self.singer_lineEdit.setText(song_info.singer)
         if song_info.songName:
             self.song_name_lineEdit.setText(song_info.songName)
         if song_info.trackNumber:
-            self.track_number_lineEdit.setText(song_info.trackNumber)
+            self.track_number_lineEdit.setText(str(song_info.trackNumber))
         if song_info.picBuffer.getvalue():
             q_img = QImage.fromData(song_info.picBuffer.getvalue())
             q_image = QPixmap.fromImage(q_img)
@@ -78,7 +78,8 @@ class ModifyDialog(QDialog, Ui_ModifyDialog):
             'album': self.album_lineEdit.text(),
             'trackNumber': self.track_number_lineEdit.text(),
             'picBuffer': None,
-            'duration': None
+            'duration': None,
+            'lyric': None
         }
         self.done_signal.emit(SongInfo(**song_info), self.pic_path)
         super(ModifyDialog, self).accept()
