@@ -1,0 +1,4 @@
+.venv/
+.idea/
+MusicTager/download
+**/config.json
