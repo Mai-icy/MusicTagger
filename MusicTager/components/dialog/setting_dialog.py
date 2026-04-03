@@ -4,8 +4,8 @@
 import json
 import os
 
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtWidgets import QDialog
 
 from ui.ui_source.SettingDialog import Ui_SettingDialog
 from components.mask_widget import MaskWidget

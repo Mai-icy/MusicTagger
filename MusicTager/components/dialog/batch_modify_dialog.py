@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import (QDialog, QLineEdit, QCheckBox, QPushButton, QLabel,
+from PyQt6.QtWidgets import (QDialog, QLineEdit, QCheckBox, QPushButton, QLabel,
                              QVBoxLayout, QHBoxLayout, QGridLayout, QFileDialog, QSizePolicy)
-from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt6.QtCore import pyqtSignal, Qt
 
 class BatchModifyDialog(QDialog):
     """
@@ -59,7 +59,7 @@ class BatchModifyDialog(QDialog):
         self.cover_checkbox = QCheckBox("封面:")
         self.cover_select_button = QPushButton("选择图片...")
         self.cover_path_label = QLabel("未选择图片")
-        self.cover_path_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        self.cover_path_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         self.cover_path_label.setWordWrap(True)
         
         cover_layout = QHBoxLayout()

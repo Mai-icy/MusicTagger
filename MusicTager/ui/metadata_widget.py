@@ -8,10 +8,20 @@ import json
 import threading
 
 from PIL import Image
-from PyQt5.Qt import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtGui import QColor, QDragEnterEvent, QDropEvent, QFontMetrics, QImage, QPixmap
+from PyQt6.QtWidgets import (
+    QAbstractItemView,
+    QApplication,
+    QFileDialog,
+    QHeaderView,
+    QLabel,
+    QListWidgetItem,
+    QMessageBox,
+    QProgressDialog,
+    QTableWidgetItem,
+    QWidget,
+)
 
 import api
 from song_metadata.compare_metadata import compare_song_info
@@ -42,7 +52,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self._init_apis()
         
         self.progress_dialog = QProgressDialog("正在批量处理...", "取消", 0, 100, self)
-        self.progress_dialog.setWindowModality(Qt.WindowModal)
+        self.progress_dialog.setWindowModality(Qt.WindowModality.WindowModal)
         self.progress_dialog.setAutoClose(True)
         self.progress_dialog.reset()
 
@@ -152,21 +162,21 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.search_tableWidget.verticalHeader().setVisible(False)
         self.search_tableWidget.setShowGrid(False)
 
-        self.search_tableWidget.horizontalHeader().setDefaultAlignment(Qt.AlignLeft)
+        self.search_tableWidget.horizontalHeader().setDefaultAlignment(Qt.AlignmentFlag.AlignLeft)
 
-        self.search_tableWidget.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
+        self.search_tableWidget.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
         self.search_tableWidget.verticalHeader().setDefaultSectionSize(47)
         self.search_tableWidget.horizontalHeader().setMinimumHeight(30)  # 表头高度
 
-        self.search_tableWidget.setSelectionMode(QAbstractItemView.SingleSelection)
-        self.search_tableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.search_tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.search_tableWidget.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
 
         self.search_tableWidget.clear()
         self.search_tableWidget.setColumnCount(4)
 
-        self.search_tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.search_tableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.Fixed)
-        self.search_tableWidget.horizontalHeader().setSectionResizeMode(3, QHeaderView.Fixed)
+        self.search_tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.search_tableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)
+        self.search_tableWidget.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)
         # self.setColumnWidth(0, 380)  # 设置指定列宽
         self.search_tableWidget.setColumnWidth(2, 55)
         self.search_tableWidget.setColumnWidth(3, 55)
@@ -186,8 +196,8 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         file_name_list = QFileDialog.getOpenFileNames(self, u"打开文件", "", "Music files(*.mp3 *.flac)")[0]
         for file_path in file_name_list:
             item = QListWidgetItem(file_path)
-            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-            item.setCheckState(Qt.Unchecked)
+            item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+            item.setCheckState(Qt.CheckState.Unchecked)
             self.file_listWidget.addItem(item)
 
     def delete_file_event(self) -> None:
@@ -559,7 +569,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
 
     def set_left_text(self, label: QLabel, text: str) -> None:
         """根据文本内容设置标签样式和文本，并处理长文本的显示。"""
-        label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        label.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
         # 检查文本是否有效
         if text and text.strip():
             # 清除样式，恢复默认
@@ -571,7 +581,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
 
         # 处理长文本的省略显示
         metrics = QFontMetrics(label.font())
-        elided_text = metrics.elidedText(display_text, Qt.ElideRight, label.width())
+        elided_text = metrics.elidedText(display_text, Qt.TextElideMode.ElideRight, label.width())
         label.setText(elided_text)
 
     def dragEnterEvent(self, a0: QDragEnterEvent) -> None:
@@ -593,8 +603,8 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
     def dropEvent(self, a0: QDropEvent) -> None:
         for q_url in a0.mimeData().urls():
             item = QListWidgetItem(q_url.toLocalFile())
-            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-            item.setCheckState(Qt.Unchecked)
+            item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+            item.setCheckState(Qt.CheckState.Unchecked)
             self.file_listWidget.addItem(item)
 
     def show_metadata(self, song_info: SongInfo, file_path: str = None, pic_buffer=None):
@@ -649,7 +659,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         checked_items = []
         for i in range(self.file_listWidget.count()):
             item = self.file_listWidget.item(i)
-            if item.checkState() == Qt.Checked:
+            if item.checkState() == Qt.CheckState.Checked:
                 checked_items.append(item)
 
         if not checked_items:
@@ -729,7 +739,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         """根据勾选的文件数量，设置批量修改按钮的可用状态"""
         checked_count = 0
         for i in range(self.file_listWidget.count()):
-            if self.file_listWidget.item(i).checkState() == Qt.Checked:
+            if self.file_listWidget.item(i).checkState() == Qt.CheckState.Checked:
                 checked_count += 1
         self.batch_modify_button.setEnabled(checked_count > 1)
 
@@ -738,7 +748,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
 
     def toggle_select_all(self, state):
         """(取消)全选 all items in the file list."""
-        check_state = Qt.Checked if state == Qt.Checked else Qt.Unchecked
+        check_state = Qt.CheckState.Checked if state == Qt.CheckState.Checked else Qt.CheckState.Unchecked
         self.file_listWidget.itemChanged.disconnect(self.on_item_changed)
         for i in range(self.file_listWidget.count()):
             self.file_listWidget.item(i).setCheckState(check_state)
@@ -758,8 +768,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
 
 if __name__ == "__main__":
     # 适配2k等高分辨率屏幕,低分辨率屏幕可以缺省
-    QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)
     myWin = MetadataWidget()
     myWin.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
