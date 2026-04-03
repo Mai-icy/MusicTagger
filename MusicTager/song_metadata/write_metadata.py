@@ -2,7 +2,6 @@
 # -*- coding:utf-8 -*-
 import os
 
-import requests
 from mutagen import id3, mp4, flac
 from song_metadata.metadata_type import SongInfo
 
@@ -13,28 +12,28 @@ def write_song_metadata(song_path: str, song_info: SongInfo, pic_path: str = Non
 
     :return: 若文件格式错标，则返回原格式和错标格式
     """
-    suffix = os.path.splitext(song_path)[-1]
+    suffix = os.path.splitext(song_path)[-1].lower()
     try:
         if suffix == ".flac":
             write_flac_metadata(song_path, song_info, pic_path)
         elif suffix == ".mp3":
             write_mp3_metadata(song_path, song_info, pic_path)
-        elif suffix == ".mp4" or suffix == ".m4a":
+        elif suffix in (".mp4", ".m4a"):
             write_mp4_metadata(song_path, song_info, pic_path)
         return ()
     except (id3.ID3NoHeaderError, mp4.MP4StreamInfoError, flac.FLACNoHeaderError):
-        for file_format, func, error in [(".mp4", write_mp4_metadata, mp4.MP4StreamInfoError),
-                                         (".mp3", write_mp3_metadata, id3.ID3NoHeaderError),
-                                         (".flac", write_flac_metadata, flac.FLACNoHeaderError)]:
+        for file_format, probe, error in [
+            (".mp4", mp4.MP4, mp4.MP4StreamInfoError),
+            (".mp3", id3.ID3, id3.ID3NoHeaderError),
+            (".flac", flac.FLAC, flac.FLACNoHeaderError),
+        ]:
             try:
-                _ = func(song_path)
+                probe(song_path)
             except error:
                 continue
-            # 可能抛出mutagen的未知错误
             else:
                 return file_format, suffix
-        else:
-            raise TypeError("文件格式不正确")
+        raise TypeError("文件格式不正确")
 
 
 def write_flac_metadata(song_path: str, song_info: SongInfo, pic_path: str = None):
@@ -66,11 +65,10 @@ def write_flac_metadata(song_path: str, song_info: SongInfo, pic_path: str = Non
         if len(audio.pictures):
             audio.clear_pictures()
         audio.add_picture(pic)
-    elif song_info.picBuffer:
-        if song_info.picBuffer.getvalue():
-            pic.mime = u"image/jpeg"
-            pic.data = song_info.picBuffer.getvalue()
-            audio.add_picture(pic)
+    elif song_info.picBuffer and song_info.picBuffer.getvalue():
+        pic.mime = "image/jpeg"
+        pic.data = song_info.picBuffer.getvalue()
+        audio.add_picture(pic)
     audio.save()
 
 
@@ -95,9 +93,8 @@ def write_mp3_metadata(song_path: str, song_info: SongInfo, pic_path: str = None
         mime = 'image/png' if pic_path.endswith("png") else 'image/jpeg'
         with open(pic_path, 'rb') as f:
             audio["APIC:"] = id3.APIC(encoding=3, mime=mime, type=3, data=f.read())
-    elif song_info.picBuffer:
-        if song_info.picBuffer.getvalue():
-            audio["APIC:"] = id3.APIC(encoding=3, mime='image/jpeg', type=3, data=song_info.picBuffer.getvalue())
+    elif song_info.picBuffer and song_info.picBuffer.getvalue():
+        audio["APIC:"] = id3.APIC(encoding=3, mime="image/jpeg", type=3, data=song_info.picBuffer.getvalue())
     audio.update_to_v23()
     audio.save(v2_version=3)
     return True
@@ -123,12 +120,8 @@ def write_mp4_metadata(song_path: str, song_info: SongInfo, pic_path: str = None
         img_format = mp4.MP4Cover.FORMAT_PNG if pic_path.endswith("png") else mp4.MP4Cover.FORMAT_JPEG
         with open(pic_path, 'rb') as f:
             audio["covr"] = [mp4.MP4Cover(f.read(), imageformat=img_format)]
-    elif song_info.picBuffer:
-        if song_info.picBuffer.getvalue():
-            audio["covr"] = [mp4.MP4Cover(song_info.picBuffer.getvalue(), imageformat=mp4.MP4Cover.FORMAT_JPEG)]
+    elif song_info.picBuffer and song_info.picBuffer.getvalue():
+        audio["covr"] = [
+            mp4.MP4Cover(song_info.picBuffer.getvalue(), imageformat=mp4.MP4Cover.FORMAT_JPEG)
+        ]
     audio.save()
-
-
-if __name__ == "__main__":
-    # FLAC(r'Z:\KuGou\2021.6.21\まふまふ - 空腹.mp3')
-    id3.ID3(r"Z:\.....机房共享文件\flac歌曲\ずっと真夜中でいいのに。\眩しいDNAだけ.flac")
