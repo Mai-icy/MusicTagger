@@ -5,9 +5,7 @@ import os
 import sys
 import time
 import json
-import threading
 
-from PIL import Image
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QColor, QDragEnterEvent, QDropEvent, QFontMetrics, QImage, QPixmap
 from PyQt6.QtWidgets import (
@@ -143,8 +141,6 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.setting_button.clicked.connect(self.setting_dialog.show)
 
         self.batch_modify_button.clicked.connect(self.batch_modify_metadata)
-        self.file_listWidget.itemChanged.connect(self.on_item_changed)
-        self.select_all_checkbox.stateChanged.connect(self.toggle_select_all)
         self.file_listWidget.currentItemChanged.connect(self.path_click_event)
         self.search_tableWidget.currentItemChanged.connect(self.result_click_event)
 
@@ -228,15 +224,15 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         file_name_list = QFileDialog.getOpenFileNames(self, u"打开文件", "", "Music files(*.mp3 *.flac)")[0]
         for file_path in file_name_list:
             item = QListWidgetItem(file_path)
-            item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
-            item.setCheckState(Qt.CheckState.Unchecked)
             self.file_listWidget.addItem(item)
+        self.batch_modify_button.setEnabled(self.file_listWidget.count() > 0)
 
     def delete_file_event(self) -> None:
         """去掉文件"""
         if self.file_listWidget and self.file_listWidget.selectedIndexes():
             row = self.file_listWidget.selectedIndexes()[0].row()
             self.file_listWidget.removeItemWidget(self.file_listWidget.takeItem(row))
+        self.batch_modify_button.setEnabled(self.file_listWidget.count() > 0)
 
     def path_click_event(self, current_item: QListWidgetItem, previous_item: QListWidgetItem) -> None:
         """解析选中的文件，并搜索关键词。优先从缓存加载。"""
@@ -364,7 +360,8 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             self.warning_dialog_show_signal.emit(repr(e))
             item.setBackground(QColor(255, 100, 100, 100))
             return
-        self.metadata_cache.pop(file_path)
+        if file_path in self.metadata_cache:
+            self.metadata_cache.pop(file_path)
 
     def write_event(self, *, pic_path: str = None) -> None:
         """写入元数据，item的背景颜色会根据写入结果改变颜色，并指向下一个选项"""
@@ -405,8 +402,6 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.api_mode = setting.api_mode
         self.is_lrc = setting.is_lrc
         self.is_rename = setting.is_rename
-        if setting.auto_if:
-            self.auto_complete_event()
 
     @thread_drive(None)
     def auto_complete_event(self) -> None:
@@ -635,9 +630,8 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
     def dropEvent(self, a0: QDropEvent) -> None:
         for q_url in a0.mimeData().urls():
             item = QListWidgetItem(q_url.toLocalFile())
-            item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
-            item.setCheckState(Qt.CheckState.Unchecked)
             self.file_listWidget.addItem(item)
+        self.batch_modify_button.setEnabled(self.file_listWidget.count() > 0)
 
     def show_metadata(self, song_info: SongInfo, file_path: str = None, pic_buffer=None):
         """在UI上显示元数据信息，并根据数据是否缺失来改变UI反馈"""
@@ -687,115 +681,11 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             # 如果没有元数据，则从文件名中提取关键词
             return os.path.splitext(os.path.basename(file_path))[0]
     def batch_modify_metadata(self):
-        """批量自动匹配元数据并写入"""
-        checked_items = []
-        for i in range(self.file_listWidget.count()):
-            item = self.file_listWidget.item(i)
-            if item.checkState() == Qt.CheckState.Checked:
-                checked_items.append((i, item.text()))
-
-        if not checked_items:
-            QMessageBox.warning(self, "提示", "请先勾选需要处理的文件。")
-            return
-        
-        self.progress_dialog.setMaximum(len(checked_items))
-        self.progress_dialog.setValue(0)
-        self.progress_dialog.show()
-
-        # 启动后台线程执行批量处理
-        self._thread_batch_modify(checked_items)
-
-    def _batch_modify_done(self):
-        """批量修改完成后的回调函数"""
-        self.progress_dialog.reset()
-        QMessageBox.information(self, "完成", "批量自动匹配已完成！")
-        # 刷新UI
-        if self.file_listWidget.currentItem():
-            # Force a refresh of the current item by directly calling the event handler
-            self.path_click_event(self.file_listWidget.currentItem(), None)
-        else:
-            # If no item is current, select the first one, which will trigger the refresh
-            if self.file_listWidget.count() > 0:
-                self.file_listWidget.setCurrentRow(0)
-
-
-    @thread_drive(_batch_modify_done)
-    def _thread_batch_modify(self, checked_items):
-        """在后台线程中执行批量元数据匹配和写入"""
-        try:
-            if self.api_mode == ApiMode.CLOUD:
-                search_func = self.cloud_api.search_data
-                info_func = self.cloud_api.get_song_info
-            elif self.api_mode == ApiMode.KUGOU:
-                search_func = self.kugou_api.search_hash
-                info_func = self.kugou_api.get_song_info
-            elif self.api_mode == ApiMode.SPOTIFY:
-                search_func = self.spotify_api.search_data
-                info_func = self.spotify_api.get_song_info
-            else:
-                raise ValueError("api_mode参数错误，未知的模式")
-
-            for i, (row, file_path) in enumerate(checked_items):
-                if self.progress_dialog.wasCanceled():
-                    break
-                try:
-                    # 1. 生成关键词
-                    original_song_info, _ = read_song_metadata(file_path)
-                    keyword = self.generate_search_keyword(file_path, original_song_info)
-
-                    # 2. 执行搜索
-                    search_results = search_func(keyword)
-
-                    if not search_results:
-                        print(f"文件 '{os.path.basename(file_path)}' 未找到匹配结果。")
-                        continue
-
-                    # 3. 获取最佳匹配的详细信息
-                    best_match = search_results[0]
-                    new_song_info = info_func(best_match.idOrMd5)
-
-                    # 4. 写入文件
-                    self._write_metadata_to_file(row, new_song_info, best_match.idOrMd5)
-                
-                except Exception as e:
-                    # 使用信号在主线程显示错误，避免线程安全问题
-                    self.warning_dialog_show_signal.emit(f"处理文件失败：{os.path.basename(file_path)}\n错误：{e}")
-                finally:
-                    self.progress_update_signal.emit(i + 1)
-        except Exception as e:
-            self.warning_dialog_show_signal.emit(f"批量处理时发生严重错误：\n{e}")
-
-    def on_item_changed(self, item):
-        """根据勾选的文件数量，设置批量修改按钮的可用状态"""
-        checked_count = 0
-        for i in range(self.file_listWidget.count()):
-            if self.file_listWidget.item(i).checkState() == Qt.CheckState.Checked:
-                checked_count += 1
-        self.batch_modify_button.setEnabled(checked_count > 1)
-        self.select_all_checkbox.blockSignals(True)
-        if self.file_listWidget.count() == 0 or checked_count == 0:
-            self.select_all_checkbox.setCheckState(Qt.CheckState.Unchecked)
-        elif checked_count == self.file_listWidget.count():
-            self.select_all_checkbox.setCheckState(Qt.CheckState.Checked)
-        else:
-            self.select_all_checkbox.setCheckState(Qt.CheckState.PartiallyChecked)
-        self.select_all_checkbox.blockSignals(False)
+        """批量自动补全：从当前项开始，依次自动匹配、导入或跳过。"""
+        self.auto_complete_event()
 
     def update_progress_dialog(self, value):
         self.progress_dialog.setValue(value)
-
-    def toggle_select_all(self, state):
-        """(取消)全选 all items in the file list."""
-        state = Qt.CheckState(state)
-        if state == Qt.CheckState.PartiallyChecked:
-            return
-        check_state = Qt.CheckState.Checked if state == Qt.CheckState.Checked else Qt.CheckState.Unchecked
-        self.file_listWidget.itemChanged.disconnect(self.on_item_changed)
-        for i in range(self.file_listWidget.count()):
-            self.file_listWidget.item(i).setCheckState(check_state)
-        self.file_listWidget.itemChanged.connect(self.on_item_changed)
-        if self.file_listWidget.count() > 0:
-            self.on_item_changed(self.file_listWidget.item(0))
 
     def set_left_text(self, label: QLabel, text: str) -> None:
         """使用省略号来呈现冗长的元数据文本，而非调整窗口大小。"""

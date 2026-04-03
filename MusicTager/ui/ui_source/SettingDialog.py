@@ -14,7 +14,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_SettingDialog(object):
     def setupUi(self, MetadataDialogSetting):
         MetadataDialogSetting.setObjectName("MetadataDialogSetting")
-        MetadataDialogSetting.resize(400, 221)
+        MetadataDialogSetting.resize(400, 160)
         font = QtGui.QFont()
         font.setFamily("微软雅黑")
         font.setPointSize(13)
@@ -24,10 +24,6 @@ class Ui_SettingDialog(object):
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.label = QtWidgets.QLabel(MetadataDialogSetting)
-        font = QtGui.QFont()
-        font.setFamily("微软雅黑")
-        font.setPointSize(13)
-        self.label.setFont(font)
         self.label.setObjectName("label")
         self.horizontalLayout_3.addWidget(self.label)
         self.api_comboBox = QtWidgets.QComboBox(MetadataDialogSetting)
@@ -43,19 +39,6 @@ class Ui_SettingDialog(object):
         self.is_rename_file_checkBox = QtWidgets.QCheckBox(MetadataDialogSetting)
         self.is_rename_file_checkBox.setObjectName("is_rename_file_checkBox")
         self.verticalLayout.addWidget(self.is_rename_file_checkBox)
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.auto_button = QtWidgets.QPushButton(MetadataDialogSetting)
-        self.auto_button.setObjectName("auto_button")
-        self.horizontalLayout_2.addWidget(self.auto_button)
-        self.label_2 = QtWidgets.QLabel(MetadataDialogSetting)
-        font = QtGui.QFont()
-        font.setFamily("微软雅黑")
-        font.setPointSize(12)
-        self.label_2.setFont(font)
-        self.label_2.setObjectName("label_2")
-        self.horizontalLayout_2.addWidget(self.label_2)
-        self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.buttonBox = QtWidgets.QDialogButtonBox(MetadataDialogSetting)
         self.buttonBox.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.buttonBox.setStandardButtons(
@@ -78,6 +61,4 @@ class Ui_SettingDialog(object):
         self.api_comboBox.setItemText(2, _translate("MetadataDialogSetting", "spotify api"))
         self.is_download_lrc_checkBox.setText(_translate("MetadataDialogSetting", "补全同时下载歌词"))
         self.is_rename_file_checkBox.setText(_translate("MetadataDialogSetting", "修改元数据同时修改文件名"))
-        self.auto_button.setText(_translate("MetadataDialogSetting", "自动补全元数据"))
-        self.label_2.setText(_translate("MetadataDialogSetting", "将会对载入的还未进行补全的文件\n"
-"进行补全"))
+

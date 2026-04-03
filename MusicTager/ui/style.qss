@@ -94,7 +94,7 @@ QTableWidget, QListWidget {
 }
 
 QListWidget {
-    font-size: 9pt;
+    font-size: 8.5pt;
 }
 
 QHeaderView::section {
@@ -105,7 +105,7 @@ QHeaderView::section {
 }
 
 QTableWidget::item, QListWidget::item {
-    padding: 4px;
+    padding: 3px;
     outline: none;
 }
 

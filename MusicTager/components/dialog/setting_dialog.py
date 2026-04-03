@@ -3,18 +3,18 @@
 
 import json
 import os
+from collections import namedtuple
+from enum import Enum
 
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import QDialog
 
-from ui.ui_source.SettingDialog import Ui_SettingDialog
 from components.mask_widget import MaskWidget
-
-from collections import namedtuple
-from enum import Enum
+from ui.ui_source.SettingDialog import Ui_SettingDialog
 
 
-Setting = namedtuple("Setting", ["api_mode", "is_lrc", "is_rename", "auto_if"])
+
+Setting = namedtuple("Setting", ["api_mode", "is_lrc", "is_rename"])
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'config.json')
 
 
@@ -30,15 +30,10 @@ class SettingDialog(QDialog, Ui_SettingDialog):
     def __init__(self, parent=None):
         super(SettingDialog, self).__init__(parent)
         self.setupUi(self)
-        self.auto_if = False
-        # 加载配置
         self._load_config()
-        # 信号初始化
         self._init_signal()
 
     def _init_signal(self):
-        self.auto_button.clicked.connect(self.auto_event)
-
         self.api_comboBox.currentIndexChanged.connect(self.comboBox_event)
 
     def _load_config(self):
@@ -68,31 +63,20 @@ class SettingDialog(QDialog, Ui_SettingDialog):
         if self.api_comboBox.currentIndex() == 2:  # 选中到spotify api，禁用打开自动下载歌词
             self.is_download_lrc_checkBox.setChecked(False)
             self.is_download_lrc_checkBox.setEnabled(False)
-        else:
-            if not self.is_download_lrc_checkBox.isEnabled():
-                self.is_download_lrc_checkBox.setEnabled(True)
-
-    def auto_event(self):
-        self.auto_if = True
-        self.accept()
+        elif not self.is_download_lrc_checkBox.isEnabled():
+            self.is_download_lrc_checkBox.setEnabled(True)
 
     def accept(self) -> None:
-        # 保存配置
         self._save_config()
-        # 传递信号
-        mode = ApiMode(self.api_comboBox.currentIndex())
-        setting_dict = {
-            "api_mode": mode,
-            "is_lrc": self.is_download_lrc_checkBox.isChecked(),
-            "is_rename": self.is_rename_file_checkBox.isChecked(),
-            "auto_if": self.auto_if
-        }
-        setting = Setting(**setting_dict)
+        setting = Setting(
+            api_mode=ApiMode(self.api_comboBox.currentIndex()),
+            is_lrc=self.is_download_lrc_checkBox.isChecked(),
+            is_rename=self.is_rename_file_checkBox.isChecked(),
+        )
         self.done_signal.emit(setting)
         super(SettingDialog, self).accept()
 
     def show(self) -> None:
-        self.auto_if = False
         self._set_mask_visible(True)
         super(SettingDialog, self).show()
 
@@ -108,4 +92,3 @@ class SettingDialog(QDialog, Ui_SettingDialog):
                 self.parent().mask_widget.show()
             else:
                 self.parent().mask_widget.hide()
-
