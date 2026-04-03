@@ -19,6 +19,7 @@ from PyQt6.QtWidgets import (
     QListWidgetItem,
     QMessageBox,
     QProgressDialog,
+    QSizePolicy,
     QTableWidgetItem,
     QWidget,
 )
@@ -58,6 +59,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
 
         self._init_signal()
         self._init_table_widgets()
+        self._init_info_labels()
         self._init_setting()
 
         self.search_data = []  # List[SongSearchInfo]
@@ -171,6 +173,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.search_tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.search_tableWidget.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.search_tableWidget.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.search_tableWidget.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.search_tableWidget.clear()
         self.search_tableWidget.setColumnCount(4)
@@ -191,6 +194,33 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             item.setText(column_text_list[column])
             self.search_tableWidget.setHorizontalHeaderItem(column, item)
         self.search_tableWidget.hideColumn(3)
+
+    def _init_info_labels(self):
+        self._managed_info_labels = [
+            self.path_label,
+            self.filename_label,
+            self.original_song_name_label,
+            self.original_singer_label,
+            self.original_album_label,
+            self.original_year_label,
+            self.original_genre_label,
+            self.original_duration_label,
+            self.original_md5_label,
+            self.result_song_name_label,
+            self.result_singer_label,
+            self.result_album_label,
+            self.result_year_label,
+            self.result_genre_label,
+            self.result_duration_label,
+            self.result_track_number_label,
+        ]
+        for label in self._managed_info_labels:
+            label.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
+            label.setMinimumWidth(0)
+            label.setWordWrap(False)
+            label.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
+            label.setProperty("full_text", label.text())
+            label.setToolTip(label.text())
 
     def add_file_event(self) -> None:
         """打开并添加文件"""
@@ -419,7 +449,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
                 if song_info.singer and song_info.songName:
                     keyword = '-'.join([song_info.singer, song_info.songName])
                 else:
-                    keyword = os.path.splitext(file_path)[0]
+                    keyword = os.path.splitext(os.path.basename(file_path))[0]
                 try:
                     search_data = search_func(keyword)
                 except api.NoneResultError:
@@ -661,7 +691,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         for i in range(self.file_listWidget.count()):
             item = self.file_listWidget.item(i)
             if item.checkState() == Qt.CheckState.Checked:
-                checked_items.append(item)
+                checked_items.append((i, item.text()))
 
         if not checked_items:
             QMessageBox.warning(self, "提示", "请先勾选需要处理的文件。")
@@ -704,10 +734,9 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             else:
                 raise ValueError("api_mode参数错误，未知的模式")
 
-            for i, item in enumerate(checked_items):
+            for i, (row, file_path) in enumerate(checked_items):
                 if self.progress_dialog.wasCanceled():
                     break
-                file_path = item.text()
                 try:
                     # 1. 生成关键词
                     original_song_info, _ = read_song_metadata(file_path)
@@ -725,7 +754,6 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
                     new_song_info = info_func(best_match.idOrMd5)
 
                     # 4. 写入文件
-                    row = self.file_listWidget.row(item)
                     self._write_metadata_to_file(row, new_song_info, best_match.idOrMd5)
                 
                 except Exception as e:
@@ -756,6 +784,27 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.file_listWidget.itemChanged.connect(self.on_item_changed)
         if self.file_listWidget.count() > 0:
             self.on_item_changed(self.file_listWidget.item(0))
+
+    def set_left_text(self, label: QLabel, text: str) -> None:
+        """使用省略号来呈现冗长的元数据文本，而非调整窗口大小。"""
+        if text and text.strip():
+            label.setStyleSheet("")
+            display_text = text
+        else:
+            label.setStyleSheet("color: #d9534f;")
+            display_text = "N/A"
+
+        label.setProperty("full_text", display_text)
+        label.setToolTip(display_text)
+        metrics = QFontMetrics(label.font())
+        label.setText(
+            metrics.elidedText(display_text, Qt.TextElideMode.ElideRight, max(label.width() - 4, 32))
+        )
+
+    def resizeEvent(self, event):
+        super(MetadataWidget, self).resizeEvent(event)
+        for label in getattr(self, "_managed_info_labels", []):
+            self.set_left_text(label, label.property("full_text"))
 
     def closeEvent(self, event):
         """重写关闭事件，确保所有线程都已结束"""
