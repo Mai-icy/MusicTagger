@@ -1,4 +1,4 @@
-#!/usr/bin/python
+﻿#!/usr/bin/python
 # -*- coding:utf-8 -*-
 import re
 import os
@@ -771,12 +771,23 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
             if self.file_listWidget.item(i).checkState() == Qt.CheckState.Checked:
                 checked_count += 1
         self.batch_modify_button.setEnabled(checked_count > 1)
+        self.select_all_checkbox.blockSignals(True)
+        if self.file_listWidget.count() == 0 or checked_count == 0:
+            self.select_all_checkbox.setCheckState(Qt.CheckState.Unchecked)
+        elif checked_count == self.file_listWidget.count():
+            self.select_all_checkbox.setCheckState(Qt.CheckState.Checked)
+        else:
+            self.select_all_checkbox.setCheckState(Qt.CheckState.PartiallyChecked)
+        self.select_all_checkbox.blockSignals(False)
 
     def update_progress_dialog(self, value):
         self.progress_dialog.setValue(value)
 
     def toggle_select_all(self, state):
         """(取消)全选 all items in the file list."""
+        state = Qt.CheckState(state)
+        if state == Qt.CheckState.PartiallyChecked:
+            return
         check_state = Qt.CheckState.Checked if state == Qt.CheckState.Checked else Qt.CheckState.Unchecked
         self.file_listWidget.itemChanged.disconnect(self.on_item_changed)
         for i in range(self.file_listWidget.count()):
