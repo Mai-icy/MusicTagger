@@ -170,6 +170,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
 
         self.search_tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.search_tableWidget.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.search_tableWidget.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
 
         self.search_tableWidget.clear()
         self.search_tableWidget.setColumnCount(4)
