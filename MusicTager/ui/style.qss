@@ -93,6 +93,10 @@ QTableWidget, QListWidget {
     alternate-background-color: #f3f6f8; /* 交替行颜色 */
 }
 
+QListWidget {
+    font-size: 9pt;
+}
+
 QHeaderView::section {
     background-color: #e4eaef;
     padding: 4px;
@@ -101,7 +105,7 @@ QHeaderView::section {
 }
 
 QTableWidget::item, QListWidget::item {
-    padding: 5px;
+    padding: 4px;
     outline: none;
 }
 

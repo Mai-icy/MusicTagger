@@ -174,6 +174,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
         self.search_tableWidget.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.search_tableWidget.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.search_tableWidget.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.file_listWidget.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.search_tableWidget.clear()
         self.search_tableWidget.setColumnCount(4)
@@ -410,7 +411,7 @@ class MetadataWidget(QWidget, Ui_MetadataWidget):
     @thread_drive(None)
     def auto_complete_event(self) -> None:
         """开启自动匹配元数据写入"""
-        if not self.file_listWidget:
+        if self.file_listWidget.count() == 0:
             self.warning_dialog.set_text("你还没有载入文件！")
             self.warning_dialog.show()
             return
