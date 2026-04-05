@@ -17,10 +17,10 @@
 
 ## 界面 Interface
 
-自动写入
-![2](https://github.com/Mai-icy/MusicTagger/blob/main/image-folder/test.gif)
 手动写入
-![1](https://github.com/Mai-icy/MusicTagger/blob/main/image-folder/test2.gif)
+![手动写入样例](https://github.com/Mai-icy/MusicTagger/blob/main/image-folder/example1.gif)
+自动写入
+![自动写入样例](https://github.com/Mai-icy/MusicTagger/blob/main/image-folder/example2.gif)
 
 ## 运行环境与依赖 Running environment and requirements
 
